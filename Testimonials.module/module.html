@@ -1,0 +1,246 @@
+{# Testimonials Module - Multi-Layout #}
+{# Integrated with theme colors #}
+
+{# Set color scheme based on selection - pulls from theme settings #}
+{% if module.styles.colors.color_scheme == 'dark' %}
+  {% set bg_color = theme.global.colors.background_color.color|default('#000000') %}
+  {% set card_bg = theme.global.colors.background_medium_light.color|default('#1a1a2e') %}
+  {% set text_color = theme.global.colors.text.color|default('#ffffff') %}
+  {% set text_muted = theme.global.colors.text.color|default('#a0a0b0') ~ 'cc' %}
+{% elif module.styles.colors.color_scheme == 'light' %}
+  {% set bg_color = theme.global.colors.background_light.color|default('#f8f9fa') %}
+  {% set card_bg = '#ffffff' %}
+  {% set text_color = theme.global.colors.background_color.color|default('#1a1a2e') %}
+  {% set text_muted = theme.global.colors.background_color.color|default('#6b7280') ~ '99' %}
+{% else %}
+  {% set bg_color = module.styles.colors.background_color.color|default(theme.global.colors.background_color.color)|default('#0a0a0f') %}
+  {% set card_bg = module.styles.colors.card_background.color|default(theme.global.colors.background_medium_light.color)|default('#1a1a2e') %}
+  {% set text_color = module.styles.colors.text_color.color|default(theme.global.colors.text.color)|default('#ffffff') %}
+  {% set text_muted = text_color ~ 'aa' %}
+{% endif %}
+
+{% set accent = module.styles.colors.accent_color.color|default(theme.global.colors.accent.color)|default('#0092fb') %}
+{% set quote_icon_color = '#fa0dff' %}
+{% set layout = module.layout_options.layout_style|default('cards') %}
+{% set columns = module.layout_options.columns|default('3') %}
+{% set border_style = module.styles.card_style.border_style|default('gradient') %}
+{% set padding_class = 'tm-padding--' ~ module.styles.spacing.section_padding|default('large') %}
+
+{# Get featured testimonial for 'featured' layout #}
+{% set featured_testimonial = none %}
+{% set other_testimonials = [] %}
+{% for item in module.testimonials %}
+  {% if item.is_featured and not featured_testimonial %}
+    {% set featured_testimonial = item %}
+  {% else %}
+    {% set other_testimonials = other_testimonials + [item] %}
+  {% endif %}
+{% endfor %}
+{# If no featured selected, use first one #}
+{% if not featured_testimonial and module.testimonials|length > 0 %}
+  {% set featured_testimonial = module.testimonials[0] %}
+  {% set other_testimonials = module.testimonials[1:] %}
+{% endif %}
+
+<section
+  class="tm-testimonials tm-testimonials--{{ layout }} tm-testimonials--cols-{{ columns }} tm-testimonials--border-{{ border_style }} {{ padding_class }}"
+  {% if module.advanced.section_id %}id="{{ module.advanced.section_id }}"{% endif %}
+  style="--tm-bg: {{ bg_color }}; --tm-card-bg: {{ card_bg }}; --tm-text: {{ text_color }}; --tm-text-muted: {{ text_muted }}; --tm-accent: {{ accent }}; --tm-quote-icon: {{ quote_icon_color }};"
+>
+  <div class="tm-container">
+
+    {# Section Header #}
+    {% if module.section_header.show_header %}
+    <header class="tm-header">
+      {% if module.section_header.eyebrow %}
+        <p class="tm-eyebrow">{{ module.section_header.eyebrow }}</p>
+      {% endif %}
+      {% if module.section_header.heading %}
+        <h2 class="tm-heading">{{ module.section_header.heading }}</h2>
+      {% endif %}
+      {% if module.section_header.subheading %}
+        <p class="tm-subheading">{{ module.section_header.subheading }}</p>
+      {% endif %}
+    </header>
+    {% endif %}
+
+    {# Layout: Cards Grid #}
+    {% if layout == 'cards' %}
+    <div class="tm-grid" role="list">
+      {% for item in module.testimonials %}
+      <article class="tm-card" role="listitem">
+        {% if module.layout_options.show_quote_icon %}
+        <div class="tm-quote-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.956.76-3.022.66-1.065 1.515-1.867 2.558-2.403L9.373 5c-.8.396-1.56.898-2.26 1.505-.71.607-1.34 1.305-1.9 2.094s-.98 1.68-1.25 2.69-.346 2.04-.217 3.1c.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l.002.003zm9.124 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.692-1.327-.817-.56-.124-1.074-.13-1.54-.022-.16-.94.09-1.95.75-3.02.66-1.06 1.514-1.86 2.557-2.4L18.49 5c-.8.396-1.555.898-2.26 1.505-.708.607-1.34 1.305-1.894 2.094-.556.79-.97 1.68-1.24 2.69-.273 1-.345 2.04-.217 3.1.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l-.007.003z"/>
+          </svg>
+        </div>
+        {% endif %}
+        <blockquote class="tm-quote">{{ item.quote }}</blockquote>
+        <footer class="tm-attribution">
+          {% if module.layout_options.show_photos and item.profile_image.src %}
+          <img
+            src="{{ item.profile_image.src }}"
+            alt="{{ item.profile_image.alt|default(item.person_name ~ ' photo') }}"
+            class="tm-avatar"
+            loading="lazy"
+            width="48"
+            height="48"
+          >
+          {% endif %}
+          <div class="tm-person">
+            <cite class="tm-name">{{ item.person_name }}</cite>
+            {% if item.person_title %}
+              <span class="tm-title">{{ item.person_title }}</span>
+            {% endif %}
+            {% if module.layout_options.show_company and item.company_name %}
+              <span class="tm-company">{{ item.company_name }}</span>
+            {% endif %}
+          </div>
+        </footer>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# Layout: Featured + Cards #}
+    {% if layout == 'featured' %}
+    <div class="tm-featured-layout">
+      {# Featured Testimonial #}
+      {% if featured_testimonial %}
+      <article class="tm-featured">
+        {% if module.layout_options.show_quote_icon %}
+        <div class="tm-quote-icon tm-quote-icon--large" aria-hidden="true">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.956.76-3.022.66-1.065 1.515-1.867 2.558-2.403L9.373 5c-.8.396-1.56.898-2.26 1.505-.71.607-1.34 1.305-1.9 2.094s-.98 1.68-1.25 2.69-.346 2.04-.217 3.1c.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l.002.003zm9.124 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.692-1.327-.817-.56-.124-1.074-.13-1.54-.022-.16-.94.09-1.95.75-3.02.66-1.06 1.514-1.86 2.557-2.4L18.49 5c-.8.396-1.555.898-2.26 1.505-.708.607-1.34 1.305-1.894 2.094-.556.79-.97 1.68-1.24 2.69-.273 1-.345 2.04-.217 3.1.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l-.007.003z"/>
+          </svg>
+        </div>
+        {% endif %}
+        <blockquote class="tm-quote tm-quote--featured">{{ featured_testimonial.quote }}</blockquote>
+        <footer class="tm-attribution tm-attribution--featured">
+          {% if module.layout_options.show_photos and featured_testimonial.profile_image.src %}
+          <img
+            src="{{ featured_testimonial.profile_image.src }}"
+            alt="{{ featured_testimonial.profile_image.alt|default(featured_testimonial.person_name ~ ' photo') }}"
+            class="tm-avatar tm-avatar--large"
+            loading="lazy"
+            width="64"
+            height="64"
+          >
+          {% endif %}
+          <div class="tm-person">
+            <cite class="tm-name">{{ featured_testimonial.person_name }}</cite>
+            {% if featured_testimonial.person_title %}
+              <span class="tm-title">{{ featured_testimonial.person_title }}</span>
+            {% endif %}
+            {% if module.layout_options.show_company and featured_testimonial.company_name %}
+              <span class="tm-company">{{ featured_testimonial.company_name }}</span>
+            {% endif %}
+          </div>
+        </footer>
+      </article>
+      {% endif %}
+
+      {# Supporting Cards #}
+      {% if other_testimonials|length > 0 %}
+      <div class="tm-supporting-grid" role="list">
+        {% for item in other_testimonials %}
+        <article class="tm-card tm-card--small" role="listitem">
+          <blockquote class="tm-quote">{{ item.quote }}</blockquote>
+          <footer class="tm-attribution">
+            {% if module.layout_options.show_photos and item.profile_image.src %}
+            <img
+              src="{{ item.profile_image.src }}"
+              alt="{{ item.profile_image.alt|default(item.person_name ~ ' photo') }}"
+              class="tm-avatar"
+              loading="lazy"
+              width="40"
+              height="40"
+            >
+            {% endif %}
+            <div class="tm-person">
+              <cite class="tm-name">{{ item.person_name }}</cite>
+              {% if item.person_title %}
+                <span class="tm-title">{{ item.person_title }}</span>
+              {% endif %}
+              {% if module.layout_options.show_company and item.company_name %}
+                <span class="tm-company">{{ item.company_name }}</span>
+              {% endif %}
+            </div>
+          </footer>
+        </article>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# Layout: Stacked List #}
+    {% if layout == 'stacked' %}
+    <div class="tm-stacked" role="list">
+      {% for item in module.testimonials %}
+      <article class="tm-stacked-item" role="listitem">
+        <div class="tm-stacked-content">
+          {% if module.layout_options.show_quote_icon %}
+          <div class="tm-quote-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.956.76-3.022.66-1.065 1.515-1.867 2.558-2.403L9.373 5c-.8.396-1.56.898-2.26 1.505-.71.607-1.34 1.305-1.9 2.094s-.98 1.68-1.25 2.69-.346 2.04-.217 3.1c.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l.002.003zm9.124 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.692-1.327-.817-.56-.124-1.074-.13-1.54-.022-.16-.94.09-1.95.75-3.02.66-1.06 1.514-1.86 2.557-2.4L18.49 5c-.8.396-1.555.898-2.26 1.505-.708.607-1.34 1.305-1.894 2.094-.556.79-.97 1.68-1.24 2.69-.273 1-.345 2.04-.217 3.1.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l-.007.003z"/>
+            </svg>
+          </div>
+          {% endif %}
+          <blockquote class="tm-quote">{{ item.quote }}</blockquote>
+        </div>
+        <footer class="tm-attribution tm-attribution--stacked">
+          {% if module.layout_options.show_photos and item.profile_image.src %}
+          <img
+            src="{{ item.profile_image.src }}"
+            alt="{{ item.profile_image.alt|default(item.person_name ~ ' photo') }}"
+            class="tm-avatar"
+            loading="lazy"
+            width="56"
+            height="56"
+          >
+          {% endif %}
+          <div class="tm-person">
+            <cite class="tm-name">{{ item.person_name }}</cite>
+            {% if item.person_title %}
+              <span class="tm-title">{{ item.person_title }}</span>
+            {% endif %}
+            {% if module.layout_options.show_company and item.company_name %}
+              <span class="tm-company">{{ item.company_name }}</span>
+            {% endif %}
+          </div>
+        </footer>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# Layout: Minimal #}
+    {% if layout == 'minimal' %}
+    <div class="tm-minimal" role="list">
+      {% for item in module.testimonials %}
+      <article class="tm-minimal-item" role="listitem">
+        {% if module.layout_options.show_quote_icon %}
+        <div class="tm-quote-icon tm-quote-icon--subtle" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.956.76-3.022.66-1.065 1.515-1.867 2.558-2.403L9.373 5c-.8.396-1.56.898-2.26 1.505-.71.607-1.34 1.305-1.9 2.094s-.98 1.68-1.25 2.69-.346 2.04-.217 3.1c.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l.002.003zm9.124 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.692-1.327-.817-.56-.124-1.074-.13-1.54-.022-.16-.94.09-1.95.75-3.02.66-1.06 1.514-1.86 2.557-2.4L18.49 5c-.8.396-1.555.898-2.26 1.505-.708.607-1.34 1.305-1.894 2.094-.556.79-.97 1.68-1.24 2.69-.273 1-.345 2.04-.217 3.1.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l-.007.003z"/>
+          </svg>
+        </div>
+        {% endif %}
+        <blockquote class="tm-quote">{{ item.quote }}</blockquote>
+        <footer class="tm-attribution tm-attribution--minimal">
+          <cite class="tm-name">{{ item.person_name }}</cite>
+          {% if item.person_title or item.company_name %}
+            <span class="tm-meta">
+              {{ item.person_title }}{% if item.person_title and item.company_name %}, {% endif %}{{ item.company_name }}
+            </span>
+          {% endif %}
+        </footer>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+</section>

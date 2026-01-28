@@ -1,0 +1,13 @@
+{
+  "label": "Testimonials - Multi-Layout",
+  "css_assets": [],
+  "external_js": [],
+  "global": false,
+  "host_template_types": ["PAGE", "BLOG_LISTING", "BLOG_POST"],
+  "icon": "module",
+  "js_assets": [],
+  "other_assets": [],
+  "smart_type": "NOT_SMART",
+  "is_available_for_new_content": true,
+  "inline_help_text": "Display customer testimonials in multiple layout styles - cards, featured quote, or stacked list."
+}

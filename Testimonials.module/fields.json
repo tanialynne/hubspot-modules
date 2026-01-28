@@ -1,0 +1,349 @@
+[
+  {
+    "id": "section_header",
+    "name": "section_header",
+    "label": "Section Header",
+    "type": "group",
+    "expanded": true,
+    "children": [
+      {
+        "id": "show_header",
+        "name": "show_header",
+        "label": "Show section header",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "id": "eyebrow",
+        "name": "eyebrow",
+        "label": "Eyebrow text",
+        "type": "text",
+        "default": "What Our Clients Say",
+        "placeholder": "e.g., Testimonials, Client Stories"
+      },
+      {
+        "id": "heading",
+        "name": "heading",
+        "label": "Heading",
+        "type": "text",
+        "default": "Real Results From Real Clients"
+      },
+      {
+        "id": "subheading",
+        "name": "subheading",
+        "label": "Subheading (optional)",
+        "type": "text",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "id": "layout_options",
+    "name": "layout_options",
+    "label": "Layout Options",
+    "type": "group",
+    "expanded": true,
+    "children": [
+      {
+        "id": "layout_style",
+        "name": "layout_style",
+        "label": "Layout style",
+        "type": "choice",
+        "display": "select",
+        "choices": [
+          ["cards", "Card Grid (2-3 columns)"],
+          ["featured", "Featured Quote + Cards"],
+          ["stacked", "Stacked List"],
+          ["minimal", "Minimal Quotes"]
+        ],
+        "default": "cards",
+        "inline_help_text": "Cards: Equal-sized cards in a grid. Featured: One large quote with smaller cards. Stacked: Vertical list. Minimal: Simple quotes without cards."
+      },
+      {
+        "id": "columns",
+        "name": "columns",
+        "label": "Cards per row (desktop)",
+        "type": "choice",
+        "display": "select",
+        "choices": [
+          ["2", "2 columns"],
+          ["3", "3 columns"]
+        ],
+        "default": "3",
+        "visibility": {
+          "controlling_field": "layout_options.layout_style",
+          "operator": "EQUAL",
+          "controlling_value_regex": "cards"
+        }
+      },
+      {
+        "id": "show_quote_icon",
+        "name": "show_quote_icon",
+        "label": "Show quote icon",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "id": "show_photos",
+        "name": "show_photos",
+        "label": "Show profile photos",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "id": "show_company",
+        "name": "show_company",
+        "label": "Show company names",
+        "type": "boolean",
+        "default": true
+      }
+    ]
+  },
+  {
+    "id": "testimonials",
+    "name": "testimonials",
+    "label": "Testimonials",
+    "type": "group",
+    "occurrence": {
+      "min": 1,
+      "max": 12,
+      "default": 3,
+      "sorting_label_field": "testimonials.person_name"
+    },
+    "default": [
+      {
+        "quote": "Working with this team transformed our cloud infrastructure. They delivered exactly what they promised and more.",
+        "person_name": "Sarah Johnson",
+        "person_title": "CTO",
+        "company_name": "TechCorp Inc.",
+        "is_featured": true
+      },
+      {
+        "quote": "Professional, knowledgeable, and responsive. They made our Microsoft migration seamless.",
+        "person_name": "Michael Chen",
+        "person_title": "IT Director",
+        "company_name": "Global Solutions",
+        "is_featured": false
+      },
+      {
+        "quote": "The best technology partner we've ever worked with. Highly recommend their services.",
+        "person_name": "Amanda Torres",
+        "person_title": "VP of Operations",
+        "company_name": "Innovate LLC",
+        "is_featured": false
+      }
+    ],
+    "children": [
+      {
+        "id": "quote",
+        "name": "quote",
+        "label": "Quote",
+        "type": "text",
+        "allow_new_line": true,
+        "required": true,
+        "placeholder": "Enter the testimonial quote..."
+      },
+      {
+        "id": "person_name",
+        "name": "person_name",
+        "label": "Name",
+        "type": "text",
+        "required": true,
+        "placeholder": "e.g., John Smith"
+      },
+      {
+        "id": "person_title",
+        "name": "person_title",
+        "label": "Title/Role",
+        "type": "text",
+        "placeholder": "e.g., CEO, Director of IT"
+      },
+      {
+        "id": "company_name",
+        "name": "company_name",
+        "label": "Company",
+        "type": "text",
+        "placeholder": "e.g., Acme Corporation"
+      },
+      {
+        "id": "profile_image",
+        "name": "profile_image",
+        "label": "Profile photo (optional)",
+        "type": "image",
+        "default": {
+          "src": "",
+          "alt": ""
+        }
+      },
+      {
+        "id": "is_featured",
+        "name": "is_featured",
+        "label": "Featured testimonial",
+        "type": "boolean",
+        "default": false,
+        "inline_help_text": "Featured testimonials appear larger in the 'Featured Quote + Cards' layout"
+      }
+    ]
+  },
+  {
+    "id": "advanced",
+    "name": "advanced",
+    "label": "Advanced",
+    "type": "group",
+    "expanded": false,
+    "children": [
+      {
+        "id": "section_id",
+        "name": "section_id",
+        "label": "Section ID (for anchor links)",
+        "type": "text",
+        "placeholder": "e.g., testimonials"
+      }
+    ]
+  },
+  {
+    "id": "styles",
+    "name": "styles",
+    "label": "Styles",
+    "type": "group",
+    "tab": "STYLE",
+    "children": [
+      {
+        "id": "colors",
+        "name": "colors",
+        "label": "Colors",
+        "type": "group",
+        "expanded": true,
+        "children": [
+          {
+            "id": "color_scheme",
+            "name": "color_scheme",
+            "label": "Color scheme",
+            "type": "choice",
+            "display": "radio",
+            "choices": [
+              ["dark", "Dark"],
+              ["light", "Light"],
+              ["custom", "Custom"]
+            ],
+            "default": "dark",
+            "inline_help_text": "Dark: dark background, light text. Light: light background, dark text."
+          },
+          {
+            "id": "background_color",
+            "name": "background_color",
+            "label": "Background color",
+            "type": "color",
+            "inherited_value": {
+              "default_value_path": "theme.global.colors.background_color"
+            },
+            "default": {
+              "color": "#0a0a0f",
+              "opacity": 100
+            },
+            "visibility": {
+              "controlling_field": "styles.colors.color_scheme",
+              "operator": "EQUAL",
+              "controlling_value_regex": "custom"
+            }
+          },
+          {
+            "id": "card_background",
+            "name": "card_background",
+            "label": "Card background",
+            "type": "color",
+            "inherited_value": {
+              "default_value_path": "theme.global.colors.background_medium_light"
+            },
+            "default": {
+              "color": "#1a1a2e",
+              "opacity": 100
+            },
+            "visibility": {
+              "controlling_field": "styles.colors.color_scheme",
+              "operator": "EQUAL",
+              "controlling_value_regex": "custom"
+            }
+          },
+          {
+            "id": "text_color",
+            "name": "text_color",
+            "label": "Text color",
+            "type": "color",
+            "inherited_value": {
+              "default_value_path": "theme.global.colors.text"
+            },
+            "default": {
+              "color": "#ffffff",
+              "opacity": 100
+            },
+            "visibility": {
+              "controlling_field": "styles.colors.color_scheme",
+              "operator": "EQUAL",
+              "controlling_value_regex": "custom"
+            }
+          },
+          {
+            "id": "accent_color",
+            "name": "accent_color",
+            "label": "Accent color",
+            "type": "color",
+            "inherited_value": {
+              "default_value_path": "theme.global.colors.accent"
+            },
+            "default": {
+              "color": "#a855f7",
+              "opacity": 100
+            },
+            "inline_help_text": "Used for quote icons, company names, and decorative elements"
+          }
+        ]
+      },
+      {
+        "id": "card_style",
+        "name": "card_style",
+        "label": "Card Style",
+        "type": "group",
+        "expanded": true,
+        "children": [
+          {
+            "id": "border_style",
+            "name": "border_style",
+            "label": "Card border",
+            "type": "choice",
+            "display": "radio",
+            "choices": [
+              ["none", "None"],
+              ["solid", "Subtle"],
+              ["gradient", "Gradient"],
+              ["glow", "Glow"]
+            ],
+            "default": "gradient"
+          }
+        ]
+      },
+      {
+        "id": "spacing",
+        "name": "spacing",
+        "label": "Spacing",
+        "type": "group",
+        "expanded": true,
+        "children": [
+          {
+            "id": "section_padding",
+            "name": "section_padding",
+            "label": "Section padding",
+            "type": "choice",
+            "display": "radio",
+            "choices": [
+              ["small", "Small"],
+              ["medium", "Medium"],
+              ["large", "Large"]
+            ],
+            "default": "large"
+          }
+        ]
+      }
+    ]
+  }
+]

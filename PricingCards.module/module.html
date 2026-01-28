@@ -1,0 +1,469 @@
+{# Pricing Cards Module - Responsive & Accessible #}
+
+{% set primary = '#05386B' %}
+{% set secondary = '#379683' %}
+{% set accent = '#E6DEC3' %}
+{% set accentLight = 'rgba(230, 222, 195, 0.3)' %}
+{% set shadow = 'rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em' %}
+
+{% set card_count = module.cards|length %}
+
+<section
+  {% if module.identity %}id="{{ module.identity }}"{% endif %}
+  class="pricing-cards-section"
+  {% if module.background_color.color %}
+  style="background-color: {{ module.background_color.color }};"
+  {% endif %}
+  aria-label="Pricing plans"
+>
+  <div class="pricing-cards__container">
+
+    {% if module.header_content %}
+    <header class="pricing-cards__header">
+      {{ module.header_content }}
+    </header>
+    {% endif %}
+
+    <div class="pricing-cards__grid pricing-cards__grid--{{ card_count }}{% if module.two_column %} pricing-cards__grid--two-col{% endif %}" role="list">
+
+      {% for card in module.cards %}
+      <article
+        class="pricing-card{% if card.is_featured %} pricing-card--featured{% endif %}"
+        role="listitem"
+        aria-labelledby="plan-title-{{ loop.index }}"
+      >
+
+        {% if card.is_featured and card.featured_label %}
+        <div class="pricing-card__badge" aria-label="Recommended plan">
+          {{ card.featured_label }}
+        </div>
+        {% endif %}
+
+        <header class="pricing-card__header">
+          <h3 class="pricing-card__title" id="plan-title-{{ loop.index }}">
+            {{ card.card_header }}
+          </h3>
+
+          {% if card.card_image.src %}
+          <div class="pricing-card__icon">
+            <img
+              src="{{ card.card_image.src }}"
+              alt="{% if card.card_image.alt %}{{ card.card_image.alt }}{% else %}{{ card.card_header }} plan icon{% endif %}"
+              loading="lazy"
+              width="60"
+              height="60"
+            >
+          </div>
+          {% endif %}
+        </header>
+
+        {% if card.price %}
+        <div class="pricing-card__pricing">
+          {% if card.price_note %}
+          <span class="pricing-card__price-note">{{ card.price_note }}</span>
+          {% endif %}
+          <div class="pricing-card__price-wrapper">
+            <span class="pricing-card__price">{{ card.price }}</span>
+            {% if card.price_period %}
+            <span class="pricing-card__period">{{ card.price_period }}</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if card.card_content %}
+        <div class="pricing-card__description">
+          {{ card.card_content }}
+        </div>
+        {% endif %}
+
+        {% if card.features and card.features|length > 0 %}
+        <ul class="pricing-card__features" aria-label="Plan features">
+          {% for feature in card.features %}
+          <li class="pricing-card__feature{% if not feature.is_included %} pricing-card__feature--excluded{% endif %}">
+            <span class="pricing-card__feature-icon" aria-hidden="true">
+              {% if feature.is_included %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              {% endif %}
+            </span>
+            <span class="pricing-card__feature-text">
+              {% if feature.is_included %}
+              {{ feature.feature_text }}
+              {% else %}
+              <s>{{ feature.feature_text }}</s>
+              <span class="sr-only">(not included)</span>
+              {% endif %}
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        <footer class="pricing-card__footer">
+          {% if card.cta_text and card.cta_link %}
+          <a
+            href="{{ card.cta_link.url.href }}"
+            class="pricing-card__cta{% if card.is_featured %} pricing-card__cta--featured{% endif %}"
+            {% if card.cta_link.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+            {% if card.cta_link.no_follow %}rel="nofollow"{% endif %}
+            aria-label="{{ card.cta_text }} - {{ card.card_header }} plan{% if card.price %} at {{ card.price }}{{ card.price_period }}{% endif %}"
+          >
+            {{ card.cta_text }}
+          </a>
+          {% endif %}
+        </footer>
+
+      </article>
+      {% endfor %}
+
+    </div>
+
+    {% if module.cta %}
+    <div class="pricing-cards__section-cta">
+      {{ module.cta }}
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% require_css %}
+<style>
+/* Pricing Cards Module */
+.pricing-cards-section {
+  padding: 40px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.pricing-cards__container {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+.pricing-cards__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.pricing-cards__header h2 {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: {{ primary }};
+  margin: 0 0 15px 0;
+}
+.pricing-cards__header p {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1rem;
+  color: {{ primary }};
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.pricing-cards__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: stretch;
+}
+.pricing-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: {{ shadow }};
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid transparent;
+}
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: rgba(67, 71, 85, 0.35) 0px 4px 1em, rgba(90, 125, 188, 0.1) 0px 0.5em 2em;
+}
+.pricing-card--featured {
+  border-color: {{ secondary }};
+}
+.pricing-card--featured:hover {
+  transform: translateY(-4px);
+}
+.pricing-card__badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: {{ secondary }};
+  color: #ffffff;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.pricing-card__header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.pricing-card__title {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: {{ primary }};
+  margin: 0;
+}
+.pricing-card__icon {
+  margin-top: 12px;
+}
+.pricing-card__icon img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+.pricing-card__pricing {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid {{ accentLight }};
+}
+.pricing-card__price-note {
+  display: block;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+.pricing-card__price-wrapper {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+.pricing-card__price {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: {{ primary }};
+  line-height: 1;
+}
+.pricing-card__period {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1rem;
+  color: #666;
+}
+.pricing-card--featured .pricing-card__price {
+  color: {{ secondary }};
+}
+.pricing-card__description {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.95rem;
+  color: {{ primary }};
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.pricing-card__description p {
+  margin: 0;
+}
+.pricing-card__features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+  flex-grow: 1;
+}
+.pricing-card__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid {{ accentLight }};
+}
+.pricing-card__feature:last-child {
+  border-bottom: none;
+}
+.pricing-card__feature-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: {{ secondary }};
+}
+.pricing-card__feature--excluded .pricing-card__feature-icon {
+  color: #ccc;
+}
+.pricing-card__feature-text {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.95rem;
+  color: {{ primary }};
+  line-height: 1.4;
+}
+.pricing-card__feature--excluded .pricing-card__feature-text {
+  color: #999;
+}
+.pricing-card__feature--excluded .pricing-card__feature-text s {
+  text-decoration: line-through;
+}
+.pricing-card__footer {
+  margin-top: auto;
+  padding-top: 8px;
+}
+.pricing-card__cta {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  background: {{ primary }};
+  border: 2px solid {{ primary }};
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+.pricing-card__cta:hover,
+.pricing-card__cta:focus {
+  background: {{ secondary }};
+  border-color: {{ secondary }};
+  color: #ffffff;
+  text-decoration: none;
+}
+.pricing-card__cta:focus {
+  outline: 2px solid {{ secondary }};
+  outline-offset: 2px;
+}
+.pricing-card__cta--featured {
+  background: {{ secondary }};
+  border-color: {{ secondary }};
+}
+.pricing-card__cta--featured:hover,
+.pricing-card__cta--featured:focus {
+  background: {{ primary }};
+  border-color: {{ primary }};
+}
+.pricing-cards__section-cta {
+  text-align: center;
+  margin-top: 40px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+  .pricing-cards-section {
+    padding: 60px 0;
+  }
+  .pricing-cards__header h2 {
+    font-size: 1.75rem;
+  }
+  .pricing-cards__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+  .pricing-card {
+    flex: 1 1 calc(50% - 24px);
+    max-width: calc(50% - 12px);
+  }
+  .pricing-cards__grid--two-col .pricing-card {
+    flex: 1 1 calc(50% - 24px);
+    max-width: calc(50% - 12px);
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .pricing-cards-section {
+    padding: 85px 0;
+  }
+  .pricing-cards__header {
+    margin-bottom: 50px;
+  }
+  .pricing-cards__grid {
+    flex-wrap: nowrap;
+    gap: 30px;
+  }
+  .pricing-cards__grid--3 .pricing-card {
+    flex: 1 1 0;
+    max-width: calc(33.333% - 20px);
+  }
+  .pricing-cards__grid--3 .pricing-card--featured {
+    transform: scale(1.03);
+    z-index: 1;
+  }
+  .pricing-cards__grid--3 .pricing-card--featured:hover {
+    transform: scale(1.03) translateY(-4px);
+  }
+  .pricing-cards__grid--2 .pricing-card,
+  .pricing-cards__grid--two-col .pricing-card {
+    flex: 1 1 0;
+    max-width: calc(50% - 15px);
+  }
+  .pricing-cards__grid--4 .pricing-card {
+    flex: 1 1 0;
+    max-width: calc(25% - 23px);
+  }
+  .pricing-card {
+    padding: 40px 32px;
+  }
+  .pricing-card__price {
+    font-size: 3rem;
+  }
+  .pricing-card__title {
+    font-size: 1.35rem;
+  }
+}
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+  .pricing-cards__grid {
+    gap: 40px;
+  }
+  .pricing-card {
+    padding: 48px 36px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .pricing-card,
+  .pricing-card__cta {
+    transition: none;
+  }
+  .pricing-card:hover {
+    transform: none;
+  }
+  .pricing-card--featured:hover {
+    transform: scale(1.03);
+  }
+}
+</style>
+{% end_require_css %}

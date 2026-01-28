@@ -1,0 +1,222 @@
+[ {
+  "id" : "846cd55b-682a-9b07-5496-9ad00d511de7",
+  "name" : "header_content",
+  "label" : "Header Content",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null
+}, {
+  "id" : "67e5b56f-b784-5998-dbe9-41f1aad5ed42",
+  "name" : "cards",
+  "label" : "Pricing Cards",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : 1,
+    "max" : 4,
+    "sorting_label_field" : "card_header",
+    "default" : 3
+  },
+  "children" : [ {
+    "id" : "5cc5e1ff-729b-9fb6-c55f-c7f993fe2ebc",
+    "name" : "card_header",
+    "label" : "Plan Name",
+    "required" : true,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Plan Name"
+  }, {
+    "id" : "price-field-001",
+    "name" : "price",
+    "label" : "Price",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "$199"
+  }, {
+    "id" : "price-period-field-001",
+    "name" : "price_period",
+    "label" : "Price Period",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "/month"
+  }, {
+    "id" : "price-note-field-001",
+    "name" : "price_note",
+    "label" : "Price Note (e.g., 'starting at')",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "starting at"
+  }, {
+    "id" : "featured-field-001",
+    "name" : "is_featured",
+    "label" : "Featured/Recommended",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "type" : "boolean",
+    "display_width" : null,
+    "default" : false
+  }, {
+    "id" : "featured-label-field-001",
+    "name" : "featured_label",
+    "label" : "Featured Badge Text",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Most Popular"
+  }, {
+    "id" : "714ea139-bcf6-de12-fb0b-15168bf1a301",
+    "name" : "card_image",
+    "label" : "Card Icon/Image",
+    "required" : false,
+    "locked" : false,
+    "responsive" : true,
+    "resizable" : true,
+    "show_loading" : false,
+    "type" : "image",
+    "display_width" : null,
+    "default" : {
+      "size_type" : "auto",
+      "src" : "",
+      "alt" : null,
+      "loading" : "lazy"
+    }
+  }, {
+    "id" : "d93ab4f2-5716-4ebf-9bcc-0fd5cbd56cfb",
+    "name" : "card_content",
+    "label" : "Plan Description",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "features-group-001",
+    "name" : "features",
+    "label" : "Features List",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : 0,
+      "max" : 15,
+      "sorting_label_field" : "feature_text",
+      "default" : 3
+    },
+    "children" : [ {
+      "id" : "feature-text-001",
+      "name" : "feature_text",
+      "label" : "Feature",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : "Feature item"
+    }, {
+      "id" : "feature-included-001",
+      "name" : "is_included",
+      "label" : "Included in Plan",
+      "required" : false,
+      "locked" : false,
+      "display" : "checkbox",
+      "type" : "boolean",
+      "display_width" : null,
+      "default" : true
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "type" : "group",
+    "display_width" : null
+  }, {
+    "id" : "cta-text-field-001",
+    "name" : "cta_text",
+    "label" : "Button Text",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Get Started"
+  }, {
+    "id" : "cta-link-field-001",
+    "name" : "cta_link",
+    "label" : "Button Link",
+    "required" : false,
+    "locked" : false,
+    "type" : "link",
+    "display_width" : null,
+    "default" : {
+      "url" : {
+        "type" : "EXTERNAL",
+        "href" : "#"
+      },
+      "open_in_new_tab" : false,
+      "no_follow" : false
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : true,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : {
+    "card_image" : {
+      "size_type" : "auto",
+      "src" : "",
+      "alt" : null,
+      "loading" : "lazy"
+    }
+  }
+}, {
+  "id" : "e8838c92-3d60-1ac6-dfee-698726cd59dc",
+  "name" : "background_color",
+  "label" : "Background Color",
+  "required" : false,
+  "locked" : false,
+  "type" : "color",
+  "display_width" : null,
+  "default" : {
+    "color" : "#ffffff",
+    "opacity" : 100
+  }
+}, {
+  "id" : "d1719525-4589-4b94-e8a0-26c1814b338a",
+  "name" : "cta",
+  "label" : "Section CTA (Below Cards)",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null
+}, {
+  "id" : "a79f8f82-045d-f892-099a-24aa36feafc7",
+  "name" : "two_column",
+  "label" : "Two Column Layout",
+  "required" : false,
+  "locked" : false,
+  "display" : "checkbox",
+  "type" : "boolean",
+  "display_width" : null,
+  "default" : false
+}, {
+  "id" : "bfb944d5-ac1f-51f4-e189-01e85f5bb9fc",
+  "name" : "identity",
+  "label" : "Section ID",
+  "required" : false,
+  "locked" : false,
+  "allow_new_line" : false,
+  "type" : "text",
+  "display_width" : null
+} ]

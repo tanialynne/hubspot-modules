@@ -1,0 +1,446 @@
+/* Testimonials Module - Multi-Layout */
+/* Integrated with theme styles */
+
+/* ==========================================================================
+   Base & Container
+   ========================================================================== */
+
+.tm-testimonials {
+  background-color: var(--tm-bg);
+  color: var(--tm-text);
+  font-family: var(--secondary-font, var(--primary-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif));
+  line-height: 1.6;
+  position: relative;
+  overflow: hidden;
+}
+
+.tm-container {
+  max-width: var(--max-width, 1200px);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Padding variations - using theme spacing with fallbacks */
+.tm-padding--small {
+  padding-top: calc(var(--vertical-spacing, 48px) * 0.5);
+  padding-bottom: calc(var(--vertical-spacing, 48px) * 0.5);
+}
+.tm-padding--medium {
+  padding-top: calc(var(--vertical-spacing, 48px) * 0.75);
+  padding-bottom: calc(var(--vertical-spacing, 48px) * 0.75);
+}
+.tm-padding--large {
+  padding-top: var(--vertical-spacing, 96px);
+  padding-bottom: var(--vertical-spacing, 96px);
+}
+
+@media (max-width: 768px) {
+  .tm-padding--small { padding-top: 32px; padding-bottom: 32px; }
+  .tm-padding--medium { padding-top: 48px; padding-bottom: 48px; }
+  .tm-padding--large { padding-top: 64px; padding-bottom: 64px; }
+}
+
+/* ==========================================================================
+   Section Header
+   ========================================================================== */
+
+.tm-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.tm-eyebrow {
+  font: var(--eyebrow-font, 600 0.75rem/1.4 var(--secondary-font, inherit));
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--tm-text);
+  margin: 0 0 12px 0;
+}
+
+.tm-heading {
+  font: var(--h2-font, 700 clamp(1.75rem, 4vw, 2.5rem)/1.2 var(--primary-font, inherit));
+  margin: 0 0 16px 0;
+  color: var(--tm-text);
+}
+
+.tm-subheading {
+  font: var(--subheadline-font, normal 300 21px / 1.619 var(--secondary-font, inherit));
+  color: var(--tm-text);
+  margin: 0;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ==========================================================================
+   Card Styles (shared)
+   ========================================================================== */
+
+.tm-card {
+  background: var(--tm-card-bg);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tm-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Border Styles */
+.tm-testimonials--border-none .tm-card {
+  border: none;
+}
+
+.tm-testimonials--border-solid .tm-card {
+  border: 1px solid var(--tm-accent);
+}
+
+.tm-testimonials--border-gradient .tm-card {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--tm-card-bg), var(--tm-card-bg)) padding-box,
+    linear-gradient(135deg, var(--tm-accent) 0%, transparent 50%, var(--tm-quote-icon, var(--tm-accent)) 100%) border-box;
+}
+
+.tm-testimonials--border-glow .tm-card {
+  border: 1px solid color-mix(in srgb, var(--tm-accent) 50%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--tm-accent) 15%, transparent);
+}
+
+.tm-testimonials--border-glow .tm-card:hover {
+  box-shadow: 0 0 30px color-mix(in srgb, var(--tm-accent) 25%, transparent);
+}
+
+/* ==========================================================================
+   Quote Icon
+   ========================================================================== */
+
+.tm-quote-icon {
+  color: var(--tm-quote-icon, var(--tm-accent));
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.tm-quote-icon--large {
+  margin-bottom: 24px;
+}
+
+.tm-quote-icon--subtle {
+  opacity: 0.4;
+  margin-bottom: 12px;
+}
+
+.tm-quote-icon svg {
+  display: block;
+}
+
+/* ==========================================================================
+   Quote Text
+   ========================================================================== */
+
+.tm-quote {
+  font: var(--base-font, 400 1rem/1.7 var(--secondary-font, inherit));
+  color: var(--tm-text);
+  margin: 0 0 24px 0;
+  flex-grow: 1;
+  font-style: normal;
+}
+
+.tm-quote--featured {
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   Attribution
+   ========================================================================== */
+
+.tm-attribution {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.tm-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid color-mix(in srgb, var(--tm-text) 10%, transparent);
+}
+
+.tm-avatar--large {
+  width: 64px;
+  height: 64px;
+}
+
+.tm-person {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tm-name {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--tm-text);
+}
+
+.tm-title {
+  font-size: 0.85rem;
+  color: var(--tm-text-muted);
+}
+
+.tm-company {
+  font-size: 0.85rem;
+  color: var(--tm-accent);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Layout: Cards Grid
+   ========================================================================== */
+
+.tm-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.tm-testimonials--cols-2 .tm-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.tm-testimonials--cols-3 .tm-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 992px) {
+  .tm-testimonials--cols-3 .tm-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .tm-testimonials--cols-2 .tm-grid,
+  .tm-testimonials--cols-3 .tm-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Layout: Featured + Cards
+   ========================================================================== */
+
+.tm-featured-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.tm-featured {
+  background: var(--tm-card-bg);
+  border-radius: 20px;
+  padding: 48px;
+  text-align: center;
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--tm-card-bg), var(--tm-card-bg)) padding-box,
+    linear-gradient(135deg, var(--tm-accent) 0%, transparent 40%, var(--tm-quote-icon, var(--tm-accent)) 100%) border-box;
+}
+
+.tm-featured .tm-quote-icon {
+  display: flex;
+  justify-content: center;
+}
+
+.tm-featured .tm-quote {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tm-attribution--featured {
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.tm-attribution--featured .tm-avatar {
+  margin-bottom: 8px;
+}
+
+.tm-attribution--featured .tm-person {
+  align-items: center;
+}
+
+.tm-supporting-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.tm-card--small {
+  padding: 24px;
+}
+
+.tm-card--small .tm-quote {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 640px) {
+  .tm-featured {
+    padding: 32px 24px;
+  }
+}
+
+/* ==========================================================================
+   Layout: Stacked List
+   ========================================================================== */
+
+.tm-stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tm-stacked-item {
+  background: var(--tm-card-bg);
+  border-radius: 16px;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--tm-card-bg), var(--tm-card-bg)) padding-box,
+    linear-gradient(90deg, var(--tm-accent) 0%, var(--tm-quote-icon, var(--tm-accent)) 15%, transparent 30%) border-box;
+  transition: transform 0.3s ease;
+}
+
+.tm-stacked-item:hover {
+  transform: translateX(8px);
+}
+
+.tm-stacked-content {
+  display: flex;
+  gap: 16px;
+}
+
+.tm-stacked-content .tm-quote-icon {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.tm-stacked-content .tm-quote {
+  margin-bottom: 0;
+}
+
+.tm-attribution--stacked {
+  flex-direction: column;
+  text-align: right;
+  gap: 8px;
+}
+
+.tm-attribution--stacked .tm-person {
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .tm-stacked-item {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .tm-attribution--stacked {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .tm-attribution--stacked .tm-person {
+    align-items: flex-start;
+  }
+
+  .tm-stacked-item:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* ==========================================================================
+   Layout: Minimal
+   ========================================================================== */
+
+.tm-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.tm-minimal-item {
+  text-align: center;
+  position: relative;
+}
+
+.tm-minimal-item .tm-quote-icon {
+  display: flex;
+  justify-content: center;
+}
+
+.tm-minimal-item .tm-quote {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.tm-attribution--minimal {
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+}
+
+.tm-attribution--minimal .tm-name {
+  font-size: 1rem;
+}
+
+.tm-attribution--minimal .tm-meta {
+  font-size: 0.875rem;
+  color: var(--tm-text-muted);
+}
+
+/* Divider between minimal items */
+.tm-minimal-item:not(:last-child)::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--tm-quote-icon, var(--tm-accent)), transparent);
+  margin: 48px auto 0;
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-card,
+  .tm-stacked-item {
+    transition: none;
+  }
+
+  .tm-card:hover,
+  .tm-stacked-item:hover {
+    transform: none;
+  }
+}
