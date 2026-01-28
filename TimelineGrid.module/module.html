@@ -1,0 +1,46 @@
+{#
+  Timeline Grid Module
+  ====================
+  Display events organized by date in a responsive CSS Grid layout.
+
+  Features:
+  - Date-grouped event listings
+  - Responsive grid (2-column desktop, 1-column mobile)
+  - Optional event images with lazy loading
+  - Time display for each event
+  - Clean CSS Grid implementation
+
+  Usage: Perfect for event schedules, conference agendas, or milestone timelines.
+#}
+
+<div class="timelinegrid">
+  {% for item in module.date %}
+  <section>
+    <h2>{{ item.date_field|datetimeformat('%B %d') }}</h2>
+    <div class="grid-wrapper">
+      {% for event in item.event %}
+      <article class="{% if event.image_field.src %}has-image{% endif %}">
+        <div class="text-content {% if not event.image_field.src %}full-width{% endif %}">
+          {% if event.time %}
+            <h3>{{ event.time }}</h3>
+          {% endif %}
+          <p>{{ event.description }}</p>
+        </div>
+        {% if event.image_field.src %}
+        <div class="image-content">
+          {% set sizeAttrs = 'width="' ~ event.image_field.width|escape_attr ~ '" height="' ~ event.image_field.height|escape_attr ~ '"' %}
+          {% if event.image_field.size_type == 'auto' %}
+            {% set sizeAttrs = 'width="' ~ event.image_field.width|escape_attr ~ '" height="' ~ event.image_field.height|escape_attr ~ '" style="max-width: 100%; height: auto;"' %}
+          {% elif event.image_field.size_type == 'auto_custom_max' %}
+            {% set sizeAttrs = 'width="' ~ event.image_field.max_width|escape_attr ~ '" height="' ~ event.image_field.max_height|escape_attr ~ '" style="max-width: 100%; height: auto;"' %}
+          {% endif %}
+          {% set loadingAttr = event.image_field.loading != 'disabled' ? 'loading="' ~ event.image_field.loading|escape_attr ~ '"' : '' %}
+          <img src="{{ event.image_field.src|escape_url }}" alt="{{ event.image_field.alt|escape_attr }}" {{ loadingAttr }} {{ sizeAttrs }}>
+        </div>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>

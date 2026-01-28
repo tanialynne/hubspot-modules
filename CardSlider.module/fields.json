@@ -1,0 +1,407 @@
+[
+  {
+    "id": "style",
+    "name": "style",
+    "label": "Style",
+    "type": "group",
+    "tab": "STYLE",
+    "expanded": false,
+    "children": [
+      {
+        "id": "background",
+        "name": "background",
+        "label": "Background",
+        "type": "group",
+        "tab": "STYLE",
+        "expanded": false,
+        "children": [
+          {
+            "id": "color",
+            "name": "color",
+            "label": "Color",
+            "type": "color",
+            "default": {
+              "color": "#181213",
+              "opacity": 100
+            }
+          }
+        ],
+        "default": {
+          "color": {
+            "color": "#181213",
+            "opacity": 100
+          }
+        }
+      },
+      {
+        "id": "spacing",
+        "name": "spacing",
+        "label": "Spacing",
+        "type": "group",
+        "tab": "STYLE",
+        "expanded": false,
+        "children": [
+          {
+            "id": "desktop",
+            "name": "desktop",
+            "label": "Desktop",
+            "type": "group",
+            "tab": "STYLE",
+            "expanded": false,
+            "children": [
+              {
+                "id": "spacing",
+                "name": "spacing",
+                "label": "Spacing",
+                "type": "spacing",
+                "default": {
+                  "padding": {
+                    "top": { "value": 80, "units": "px" },
+                    "bottom": { "value": 80, "units": "px" },
+                    "left": { "value": null, "units": null },
+                    "right": { "value": null, "units": null }
+                  }
+                }
+              }
+            ],
+            "default": {
+              "spacing": {
+                "padding": {
+                  "top": { "value": 80, "units": "px" },
+                  "bottom": { "value": 80, "units": "px" },
+                  "left": { "value": null, "units": null },
+                  "right": { "value": null, "units": null }
+                }
+              }
+            }
+          },
+          {
+            "id": "mobile",
+            "name": "mobile",
+            "label": "Mobile",
+            "type": "group",
+            "tab": "STYLE",
+            "expanded": false,
+            "children": [
+              {
+                "id": "spacing",
+                "name": "spacing",
+                "label": "Spacing",
+                "type": "spacing",
+                "default": {
+                  "padding": {
+                    "top": { "value": 50, "units": "px" },
+                    "bottom": { "value": 50, "units": "px" },
+                    "left": { "value": null, "units": null },
+                    "right": { "value": null, "units": null }
+                  }
+                }
+              }
+            ],
+            "default": {
+              "spacing": {
+                "padding": {
+                  "top": { "value": 50, "units": "px" },
+                  "bottom": { "value": 50, "units": "px" },
+                  "left": { "value": null, "units": null },
+                  "right": { "value": null, "units": null }
+                }
+              }
+            }
+          }
+        ],
+        "default": {
+          "desktop": {
+            "spacing": {
+              "padding": {
+                "top": { "value": 80, "units": "px" },
+                "bottom": { "value": 80, "units": "px" },
+                "left": { "value": null, "units": null },
+                "right": { "value": null, "units": null }
+              }
+            }
+          },
+          "mobile": {
+            "spacing": {
+              "padding": {
+                "top": { "value": 50, "units": "px" },
+                "bottom": { "value": 50, "units": "px" },
+                "left": { "value": null, "units": null },
+                "right": { "value": null, "units": null }
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": "card_height",
+        "name": "card_height",
+        "label": "Card Height",
+        "type": "group",
+        "tab": "STYLE",
+        "expanded": false,
+        "children": [
+          {
+            "id": "desktop",
+            "name": "desktop",
+            "label": "Desktop",
+            "type": "group",
+            "tab": "STYLE",
+            "expanded": false,
+            "children": [
+              {
+                "id": "number_field",
+                "name": "number_field",
+                "label": "Height",
+                "type": "number",
+                "display": "text",
+                "step": 1,
+                "suffix": "px",
+                "default": 280
+              }
+            ],
+            "default": { "number_field": 280 }
+          },
+          {
+            "id": "tablet",
+            "name": "tablet",
+            "label": "Tablet",
+            "type": "group",
+            "tab": "STYLE",
+            "expanded": false,
+            "children": [
+              {
+                "id": "number_field",
+                "name": "number_field",
+                "label": "Height",
+                "type": "number",
+                "display": "text",
+                "step": 1
+              }
+            ],
+            "default": {}
+          },
+          {
+            "id": "mobile",
+            "name": "mobile",
+            "label": "Mobile",
+            "type": "group",
+            "tab": "STYLE",
+            "expanded": false,
+            "children": [
+              {
+                "id": "number_field",
+                "name": "number_field",
+                "label": "Height",
+                "type": "number",
+                "display": "text",
+                "step": 1,
+                "default": 296
+              }
+            ],
+            "default": { "number_field": 296 }
+          }
+        ],
+        "default": {
+          "desktop": { "number_field": 280 },
+          "tablet": {},
+          "mobile": { "number_field": 296 }
+        }
+      }
+    ],
+    "default": {
+      "background": {
+        "color": {
+          "color": "#181213",
+          "opacity": 100
+        }
+      },
+      "spacing": {
+        "desktop": {
+          "spacing": {
+            "padding": {
+              "top": { "value": 80, "units": "px" },
+              "bottom": { "value": 80, "units": "px" },
+              "left": { "value": null, "units": null },
+              "right": { "value": null, "units": null }
+            }
+          }
+        },
+        "mobile": {
+          "spacing": {
+            "padding": {
+              "top": { "value": 50, "units": "px" },
+              "bottom": { "value": 50, "units": "px" },
+              "left": { "value": null, "units": null },
+              "right": { "value": null, "units": null }
+            }
+          }
+        }
+      },
+      "card_height": {
+        "desktop": { "number_field": 280 },
+        "tablet": {},
+        "mobile": { "number_field": 296 }
+      }
+    }
+  },
+  {
+    "id": "enable_top_content",
+    "name": "enable_top_content",
+    "label": "Enable Top Content",
+    "type": "boolean",
+    "display": "checkbox",
+    "default": false,
+    "inline_help_text": "Show a heading above the slider"
+  },
+  {
+    "id": "content",
+    "name": "content",
+    "label": "Top Content",
+    "type": "richtext",
+    "visibility": {
+      "controlling_field_path": "enable_top_content",
+      "controlling_value_regex": "true",
+      "operator": "EQUAL"
+    },
+    "default": "<h2 style=\"color:#fff;\">Section Heading</h2>"
+  },
+  {
+    "id": "cards",
+    "name": "cards",
+    "label": "Cards",
+    "type": "group",
+    "occurrence": {
+      "min": null,
+      "max": null,
+      "sorting_label_field": "content",
+      "default": 4
+    },
+    "children": [
+      {
+        "id": "content",
+        "name": "content",
+        "label": "Quote/Content",
+        "type": "text",
+        "validation_regex": "",
+        "allow_new_line": false,
+        "show_emoji_picker": false,
+        "default": "This is an example testimonial or content quote that displays in the card slider."
+      },
+      {
+        "id": "content_size",
+        "name": "content_size",
+        "label": "Content Font Size",
+        "type": "group",
+        "tab": "CONTENT",
+        "expanded": false,
+        "children": [
+          {
+            "id": "desktop",
+            "name": "desktop",
+            "label": "Desktop",
+            "type": "number",
+            "display": "text",
+            "step": 1,
+            "suffix": "px",
+            "default": 20
+          },
+          {
+            "id": "tablet",
+            "name": "tablet",
+            "label": "Tablet",
+            "type": "number",
+            "display": "text",
+            "step": 1,
+            "suffix": "px",
+            "default": 18
+          },
+          {
+            "id": "mobile",
+            "name": "mobile",
+            "label": "Mobile",
+            "type": "number",
+            "display": "text",
+            "step": 1,
+            "suffix": "px",
+            "default": 16
+          }
+        ],
+        "default": {
+          "desktop": 20,
+          "tablet": 18,
+          "mobile": 16
+        }
+      },
+      {
+        "id": "name_t",
+        "name": "name_t",
+        "label": "Name",
+        "type": "text",
+        "validation_regex": "",
+        "allow_new_line": false,
+        "show_emoji_picker": false,
+        "default": "John Doe"
+      },
+      {
+        "id": "designation",
+        "name": "designation",
+        "label": "Title/Designation",
+        "type": "text",
+        "validation_regex": "",
+        "allow_new_line": false,
+        "show_emoji_picker": false,
+        "default": "CEO, Example Company"
+      },
+      {
+        "id": "image",
+        "name": "image",
+        "label": "Image",
+        "type": "image",
+        "responsive": true,
+        "resizable": true,
+        "show_loading": false,
+        "default": {
+          "size_type": "auto",
+          "src": "",
+          "alt": "Card image",
+          "loading": "lazy",
+          "width": 199,
+          "height": 280,
+          "max_width": 199,
+          "max_height": 280
+        }
+      }
+    ],
+    "tab": "CONTENT",
+    "expanded": false,
+    "default": [
+      {
+        "content": "This is an example testimonial or content quote.",
+        "content_size": { "desktop": 20, "tablet": 18, "mobile": 16 },
+        "name_t": "John Doe",
+        "designation": "CEO, Example Company",
+        "image": {
+          "size_type": "auto",
+          "src": "",
+          "alt": "Card image",
+          "loading": "lazy"
+        }
+      }
+    ]
+  },
+  {
+    "id": "slider_width",
+    "name": "slider_width",
+    "label": "Slider Width",
+    "type": "choice",
+    "display": "select",
+    "choices": [
+      ["content-wrappes", "Full Width"],
+      ["content-wrapper", "Container"]
+    ],
+    "multiple": false,
+    "reordering_enabled": true,
+    "default": "content-wrapper"
+  }
+]

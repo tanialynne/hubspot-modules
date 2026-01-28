@@ -1,0 +1,373 @@
+{#
+  Card Slider Module
+  ==================
+  Testimonial/content card slider using Slick carousel.
+
+  Features:
+  - Slick carousel integration with responsive breakpoints
+  - Dynamic card height configuration (desktop/tablet/mobile)
+  - CSS custom properties for dynamic font sizing
+  - Optional top section heading
+  - Full-width or container-width options
+  - Dot navigation indicators
+
+  Dependencies:
+  - jQuery
+  - Slick Carousel (https://kenwheeler.github.io/slick/)
+
+  Usage: Display testimonials, team members, or featured content in a slider format.
+#}
+
+<section class="card-slider-sec">
+  <div class="{{ module.slider_width }}">
+
+    {% if module.enable_top_content %}
+    <div class="top-content-heading padding-24">
+      {{ module.content }}
+    </div>
+    {% endif %}
+
+    <div class="card-slider-slide slider">
+      {% for item in module.cards %}
+      <div>
+        <div class="card-slider-wrap">
+          <div class="card-slide-col-l">
+            <div class="card-slide-content">
+              <div class="card-slide-content-top">
+                <div class="card-slide-des" style="--desk-s:{{ item.content_size.desktop }}px;--tab-s:{{ item.content_size.tablet }}px;--mob-s:{{ item.content_size.mobile }}px;">
+                  {{ item.content }}
+                </div>
+              </div>
+              <div class="card-slide-content-bottom">
+                <div class="card-slide-name">{{ item.name_t }}</div>
+                <div class="card-slide-designation">{{ item.designation }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-slide-col-r">
+            <div class="card-slide-img">
+              {% set loadingAttr = item.image.loading != 'disabled' ? 'loading="' ~ item.image.loading|escape_attr ~ '"' : '' %}
+              <img src="{{ item.image.src|escape_url }}" alt="{{ item.image.alt|escape_attr }}" {{ loadingAttr }}>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% require_css %}
+<style>
+{% scope_css %}
+
+/* Section Background & Spacing */
+.card-slider-sec {
+  {{ module.style.spacing.desktop.spacing.css }};
+  background: rgba({{ module.style.background.color.color | convert_rgb }}, {{ module.style.background.color.opacity / 100 }});
+}
+
+/* Top Content Heading */
+.top-content-heading :where(h1, h2, h3, h4, h5, h6) {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.top-content-heading h2,
+.top-content-heading h2 span {
+  font-weight: 800 !important;
+}
+
+{% if module.slider_width == 'content-wrappes' %}
+.card-slider-slide {
+  margin-left: 24px;
+}
+{% endif %}
+
+/* Card Wrapper */
+.card-slider-wrap {
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  margin: 0 8px;
+}
+
+/* Column Sizing */
+.card-slide-col-l {
+  flex: 0 0 53%;
+  max-width: 53%;
+}
+
+.card-slide-col-r {
+  flex: 0 0 47%;
+  max-width: 47%;
+}
+
+/* Image Container */
+.card-slide-img {
+  max-height: {{ module.style.card_height.desktop.number_field }}px;
+  height: 100% !important;
+}
+
+.card-slide-img img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Content Container */
+.card-slide-content {
+  padding: 24px;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  max-height: {{ module.style.card_height.desktop.number_field }}px;
+  height: 100%;
+}
+
+/* Quote/Description Text */
+.card-slide-des {
+  color: #0E0303;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  font-size: var(--desk-s);
+  font-family: var(--heading-font, sans-serif);
+}
+
+/* Attribution - Name */
+.card-slide-name {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--accent-color, #ED0505);
+  text-transform: uppercase;
+  font-family: var(--heading-font, sans-serif);
+}
+
+/* Attribution - Designation */
+.card-slide-designation {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--accent-color, #ED0505);
+  font-family: var(--heading-font, sans-serif);
+  text-transform: uppercase;
+}
+
+.card-slide-content-bottom {
+  margin-top: 20px;
+}
+
+.padding-24 {
+  padding: 0px 24px;
+}
+
+/* Slick Dots Styling */
+.card-slider-slide .slick-dots li,
+.card-slider-slide .slick-dots li button {
+  cursor: pointer;
+  height: 4px;
+  width: 32px;
+  padding: 0px;
+}
+
+.card-slider-slide .slick-dots li button:before {
+  content: '' !important;
+  width: 32px;
+  height: 4px;
+  background: #8b8889;
+  opacity: 1;
+}
+
+.card-slider-slide .slick-dots li.slick-active button:before {
+  background: #000;
+  opacity: 1;
+}
+
+.card-slider-slide .slick-list.draggable {
+  padding-bottom: 32px;
+}
+
+/* Hide until initialized to prevent flash */
+.card-slider-slide.slider {
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+.card-slider-slide.slick-initialized {
+  height: auto !important;
+  opacity: 1 !important;
+}
+
+/* =====================
+   Tablet Breakpoint
+   ===================== */
+@media (max-width: 1250px) {
+  .card-slide-content {
+    max-height: {{ module.style.card_height.tablet.number_field }}px;
+    height: 100%;
+  }
+
+  .card-slider-wrap {
+    height: {{ module.style.card_height.tablet.number_field }}px;
+  }
+
+  .card-slide-img {
+    max-height: {{ module.style.card_height.tablet.number_field }}px;
+    height: 100% !important;
+  }
+
+  {% if module.slider_width == 'content-wrappes' %}
+  .card-slider-wrap {
+    display: flex;
+    margin: 0px;
+    margin-right: 16px;
+  }
+  {% endif %}
+
+  .card-slide-des {
+    font-size: var(--tab-s) !important;
+  }
+
+  .card-slider-sec {
+    padding-bottom: 25px;
+  }
+}
+
+/* =====================
+   Mobile Breakpoint
+   ===================== */
+@media (max-width: 767px) {
+  .card-slide-content {
+    padding: 16px;
+    max-height: {{ module.style.card_height.mobile.number_field }}px;
+    height: 100%;
+  }
+
+  .card-slide-img {
+    max-height: {{ module.style.card_height.mobile.number_field }}px;
+    height: 100% !important;
+  }
+
+  .card-slider-wrap {
+    height: {{ module.style.card_height.mobile.number_field }}px;
+  }
+
+  {% if module.slider_width == 'content-wrappes' %}
+  .card-slider-wrap {
+    display: flex;
+    margin: 0px;
+    margin-right: 16px;
+  }
+  {% endif %}
+
+  .content-wrapper {
+    padding: 0px;
+  }
+
+  .card-slider-sec {
+    {{ module.style.spacing.mobile.spacing.css }};
+    padding-bottom: 25px;
+  }
+
+  .card-slide-des {
+    font-size: var(--mob-s) !important;
+  }
+}
+
+/* Extra Small Screens */
+@media (max-width: 365px) {
+  .card-slide-content {
+    max-height: 100%;
+    height: 100%;
+  }
+
+  .card-slide-img {
+    max-height: 100%;
+    height: 100% !important;
+  }
+
+  .card-slider-wrap {
+    height: 100%;
+  }
+}
+
+{% end_scope_css %}
+</style>
+{% end_require_css %}
+
+{% require_js %}
+<script>
+  // Initialize Slick Carousel
+  $('.card-slider-slide').slick({
+    dots: true,
+    arrows: false,
+    infinite: false,
+    speed: 300,
+    {% if module.slider_width == 'content-wrapper' %}
+    slidesToShow: 3,
+    {% else %}
+    slidesToShow: 3.08,
+    {% endif %}
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1250,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 767,
+        settings: {
+          {% if module.slider_width == 'content-wrapper' %}
+          slidesToShow: 1.10,
+          {% else %}
+          slidesToShow: 1,
+          {% endif %}
+          slidesToScroll: 1
+        }
+      }
+    ]
+  });
+
+  // Equal height function for very small screens
+  function setEqualHeight() {
+    const parent = document.querySelector('.card-slider-slide');
+    if (!parent) return;
+
+    const imgWraps = parent.querySelectorAll('.card-slide-img');
+    const contentWraps = parent.querySelectorAll('.card-slide-content');
+
+    if (window.innerWidth <= 365) {
+      let maxHeight = 0;
+
+      imgWraps.forEach((imgWrap, index) => {
+        const contentWrap = contentWraps[index];
+        imgWrap.style.height = 'auto';
+        contentWrap.style.height = 'auto';
+
+        const imgWrapHeight = imgWrap.offsetHeight;
+        const contentWrapHeight = contentWrap.offsetHeight;
+        maxHeight = Math.max(maxHeight, imgWrapHeight, contentWrapHeight);
+      });
+
+      parent.style.setProperty('--equal-height', `${maxHeight}px`);
+      parent.classList.add('equal-height');
+    } else {
+      parent.classList.remove('equal-height');
+      parent.style.removeProperty('--equal-height');
+    }
+  }
+
+  window.addEventListener('load', setEqualHeight);
+  window.addEventListener('resize', setEqualHeight);
+</script>
+{% end_require_js %}

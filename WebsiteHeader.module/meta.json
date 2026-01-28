@@ -1,0 +1,9 @@
+{
+  "label": "Website Header",
+  "global": false,
+  "content_types": ["LANDING_PAGE", "SITE_PAGE", "BLOG_LISTING", "BLOG_POST"],
+  "host_template_types": ["PAGE", "BLOG_LISTING", "BLOG_POST"],
+  "is_available_for_new_content": true,
+  "icon": "module",
+  "inline_help_text": "Enterprise-level header with mega menu, sticky navigation, mobile hamburger menu, search, and 50+ configuration options."
+}

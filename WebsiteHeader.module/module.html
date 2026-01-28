@@ -1,0 +1,3467 @@
+
+{% if module.mega_menu %}
+
+{% set mega_menu_class = "business-header--mega-menu-" ~ module.mega_menu_settings.width %}
+
+{% endif %}
+
+<div class="business-header  business-header--{{ name }} business-header--transparent-{{ module.transparent_header }} business-header--mobile-transparent-{{ module.mobile.transparent_header }} {{ mega_menu_class }}" data-sticky="{{ module.enable }}">
+
+    {% if module.enable_top_bar %}
+    <div class="header-top-bar">
+        <div class="container">
+            <div class="top-bar-row">
+                <div class="left-bar">
+                    <ul class="bar-list">
+                        {% for item in module.top_bar.left %}
+                        <li>
+                            <div class="bar-ico">
+                                {% icon
+		                            name="{{ item.icon.name }}"
+		                            style="{{ item.icon.type }}"
+		                            unicode="{{ item.icon.unicode }}"
+		                            icon_set="{{ item.icon.icon_set }}"
+	                            %}
+                            </div>
+                            <div class="bar-text">{{ item.text }}</div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="right-bar">
+                    <ul class="social-list">
+                        {% for item in module.top_bar.right %}
+                        <li>
+                            <a href="{{ item.url.href }}">
+                                {% icon
+		                            name="{{ item.icon.name }}"
+		                            style="{{ item.icon.type }}"
+		                            unicode="{{ item.icon.unicode }}"
+		                            icon_set="{{ item.icon.icon_set }}"
+	                            %}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if module.header_variant == 'default'  %}
+    <div class= "business-header__container container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header__logo business-header__logo--main">
+            {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+            {% set link = "//" ~ module.logo.link %}
+            {% else %}
+            {% set link = module.logo.link || "" %}
+            {% endunless %}  
+
+            {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                alt='{{ module.logo.img.alt }}',
+                src='{{ module.logo.img.src }}',
+                link='{{ link }}',
+                width='{{ module.logo.img.width }}',
+                height='{{ module.logo.img.height }}',
+                open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+              %}
+            {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+
+            {% logo "hs_logo_widget"
+                heading_level="{{ module.logo.heading_level }}",
+                link='{{ link }}',
+                open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                src='',
+                suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+              %}
+
+            {% else %}
+            {% logo "hs_logo_widget"
+                link='{{ link }}',
+                open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+              %}
+            {% endif %}
+        </div>
+
+        <div class="business-header__navigation business-header__{{ module.style.navigation_align }}">
+            {% macro defaultItemClasses() %}
+            {{
+              {
+                'class': 'business-no-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro childClasses() %}
+            {{
+              {
+                'class': 'business-has-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeNode() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-item',
+                'aria-current': 'page'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeBranch() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-branch'
+              }|xmlattr
+
+             }}
+            {% endmacro %}
+            {% macro linkTarget() %}
+            {{
+              {
+                'target': '_blank',
+                'rel': 'noopener'
+              }|xmlattr
+            }}
+            {% endmacro %}
+            {% macro link(node) %}
+            <li {{ childClasses() if node.children else defaultItemClasses() }}>
+                <span><a href="{{ node.url if node.url else 'javascript:;' }}" class="business-menu-link" {{ activeBranch() if node.activeBranch }} {{ activeNode() if node.activeNode }} {{ linkTarget() if node.linkTarget }}><span>{{ node.label }}</span>{% if node.children %}<span class="business-menu-chevron"><svg width="16" height="16" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g transform="scale(0.333333)"><path fill="#000" d="M35.586,15.586c0.781,-0.781 2.047,-0.781 2.828,0c0.781,0.781 0.781,2.047 0,2.828l-14,14c-0.781,0.781 -2.047,0.781 -2.828,0l-14,-14c-0.781,-0.781 -0.781,-2.047 0,-2.828c0.781,-0.781 2.047,-0.781 2.828,0l12.586,12.586l12.586,-12.586Z"></path></g></svg></span>{% endif %}</a></span>
+
+                {% if node.children %}
+                {{ renderNavigation(node) }}
+                {% endif %}
+            </li>
+            {% endmacro %}
+            {% macro renderNavigation(menuTree) %}
+            {% set level = level + 1 %}
+            <ul class="business-submenu level-{{ level }}">
+                {% for node in menuTree.children %}
+                {{ link(node) }}
+                {% endfor %}
+            </ul>
+            {% endmacro %}
+            <nav aria-label="Main menu" class="business-navigation-primary">
+                {{ renderNavigation(menu(module.primary_menu.menu)) }} 
+            </nav>
+        </div>
+
+        <div class="business-header__icons">
+
+            {% if module.lg_switcher %}
+            {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+            <div class="business-header__language-switcher">
+                <div class="business-header__language-switcher--label">
+                    <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                    <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                    {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% if module.search == true %}
+            <a href="#business-header__icons--search__mmenu" class="business-header__icons--search" >
+                <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+            </a>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__content">
+
+            {% if module.cs_settings.rich_text %}
+            <div class="business-header__content--rich-text">
+                {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.social_media %}
+            <div class="business-social-links">
+                {% for item in module.cs_settings.sm_settings.social_links %}
+                {% set href = item.social_link.url.href %}
+                {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                {% set href = "mailto:" + href %}
+                {% endif %}
+                {% set rel = [] %}
+                {% if item.social_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if item.social_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                {% if item.social_account != 'custom_icon' %}
+                {% set social_icon = item.social_account %}
+                {% else %}
+                {% set social_icon = item.custom_icon.name %}
+                {% endif %}
+
+                <a class="business-social-links__link" href="{{ href }}"
+                   {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                    {% icon
+                extra_classes='business-social-links__icon',
+                name='{{ social_icon }}',
+                purpose='semantic',
+                style='SOLID',
+                title='{{ item.accessibility.title }}',
+                unique_in_loop=True
+              %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.button %}
+            {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+            {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+            {% set href = '' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+            {% endunless %}
+            {% endif %}
+
+            {% set rel = [] %}
+            {% if module.cs_settings.button_settings.button_link.no_follow %}
+            {% do rel.append("nofollow") %}
+            {% endif %}
+            {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+            {% do rel.append("noopener") %}
+            {% endif %}
+
+            <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+
+                {% if module.cs_settings.enable_login_cta %}
+                <a class="login_cta" href="{{ module.cs_settings.login_cta.login_cta_url.href }}" target="_blank">{{ module.cs_settings.login_cta.cta_login }}</a>
+                {% endif %}
+                <a class="button" href="{{ href }}"
+                   {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                   >
+                    <span>
+                        {{ module.cs_settings.button_settings.button_text }}
+                    </span>
+                    {% if module.cs_settings.button_settings.custom_icon %}
+                    {% icon
+                  name="{{ module.cs_settings.button_settings.icon.name }}"
+                  style="{{ module.cs_settings.button_settings.icon.type }}"
+                  unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                  icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                %}
+                    {% endif %}
+                </a>
+
+
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+    {% elif module.header_variant == 'off-canvas-menu'  %}
+    <div class="business-header__container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header__logo business-header__logo--main">
+            {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+            {% set link = "//" ~ module.logo.link %}
+            {% else %}
+            {% set link = module.logo.link || "" %}
+            {% endunless %}
+
+            {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                    override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                    alt='{{ module.logo.img.alt }}',
+                    src='{{ module.logo.img.src }}',
+                    link='{{ link }}',
+                    width='{{ module.logo.img.width }}',
+                    height='{{ module.logo.img.height }}',
+                    open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                  %}
+            {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+
+            {% logo "hs_logo_widget"
+                    heading_level="{{ module.logo.heading_level }}",
+                    link='{{ link }}',
+                    open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                    src='',
+                    suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                  %}
+
+            {% else %}
+            {% logo "hs_logo_widget"
+                    link='{{ link }}',
+                    open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                  %}
+            {% endif %}
+        </div>
+
+        <div class="business-header__icons">
+
+            {% if module.lg_switcher %}
+            {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+            <div class="business-header__language-switcher">
+                <div class="business-header__language-switcher--label">
+                    <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                    <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                    {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% if module.search == true %}
+            <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+            </a>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__content">
+
+            {% if module.cs_settings.rich_text %}
+            <div class="business-header__content--rich-text">
+                {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.social_media %}
+            <div class="business-social-links">
+                {% for item in module.cs_settings.sm_settings.social_links %}
+                {% set href = item.social_link.url.href %}
+                {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                {% set href = "mailto:" + href %}
+                {% endif %}
+                {% set rel = [] %}
+                {% if item.social_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if item.social_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                {% if item.social_account != 'custom_icon' %}
+                {% set social_icon = item.social_account %}
+                {% else %}
+                {% set social_icon = item.custom_icon.name %}
+                {% endif %}
+
+                <a class="business-social-links__link" href="{{ href }}"
+                   {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                    {% icon
+                    extra_classes='business-social-links__icon',
+                    name='{{ social_icon }}',
+                    purpose='semantic',
+                    style='SOLID',
+                    title='{{ item.accessibility.title }}',
+                    unique_in_loop=True
+                  %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.button %}
+            {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+            {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+            {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+            {% endunless %}
+            {% endif %}
+
+            {% set rel = [] %}
+            {% if module.cs_settings.button_settings.button_link.no_follow %}
+            {% do rel.append("nofollow") %}
+            {% endif %}
+            {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+            {% do rel.append("noopener") %}
+            {% endif %}
+
+            <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                   {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                   >
+
+                    {{ module.cs_settings.button_settings.button_text }}
+
+                    {% if module.cs_settings.button_settings.custom_icon %}
+                    {% icon
+                      name="{{ module.cs_settings.button_settings.icon.name }}"
+                      style="{{ module.cs_settings.button_settings.icon.type }}"
+                      unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                      icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                    %}
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__mobile-nav">
+            <div class="business-header__mobile-nav__inner">
+
+                <a href="#business-header__mobile-nav__mmenu" class="mburger">
+                    <b></b>
+                    <b></b>
+                    <b></b>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    {% elif module.header_variant == 'centered-logo'  %}
+    <div class="business-header__container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header--{{ module.header_variant }}--col-left">
+
+            <div class="business-header__icons business-header__icons--left">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'left' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'left' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'left' %}
+            <div class="business-header__content business-header__content--left">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                      extra_classes='business-social-links__icon',
+                      name='{{ social_icon }}',
+                      purpose='semantic',
+                      style='SOLID',
+                      title='{{ item.accessibility.title }}',
+                      unique_in_loop=True
+                    %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                        name="{{ module.cs_settings.button_settings.icon.name }}"
+                        style="{{ module.cs_settings.button_settings.icon.type }}"
+                        unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                        icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                      %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-center">
+
+            <div class="business-header__logo business-header__logo--main">
+                {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+                {% set link = "//" ~ module.logo.link %}
+                {% else %}
+                {% set link = module.logo.link || "" %}
+                {% endunless %}
+
+                {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+                {% logo "hs_logo_widget"
+                      override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                      alt='{{ module.logo.img.alt }}',
+                      src='{{ module.logo.img.src }}',
+                      link='{{ link }}',
+                      width='{{ module.logo.img.width }}',
+                      height='{{ module.logo.img.height }}',
+                      open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    %}
+                {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+
+                {% logo "hs_logo_widget"
+                      heading_level="{{ module.logo.heading_level }}",
+                      link='{{ link }}',
+                      open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                      src='',
+                      suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                    %}
+
+                {% else %}
+                {% logo "hs_logo_widget"
+                      link='{{ link }}',
+                      open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    %}
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-right">
+
+            <div class="business-header__icons">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'right' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'right' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'right' %}
+            <div class="business-header__content">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                      extra_classes='business-social-links__icon',
+                      name='{{ social_icon }}',
+                      purpose='semantic',
+                      style='SOLID',
+                      title='{{ item.accessibility.title }}',
+                      unique_in_loop=True
+                    %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                        name="{{ module.cs_settings.button_settings.icon.name }}"
+                        style="{{ module.cs_settings.button_settings.icon.type }}"
+                        unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                        icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                      %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+            <div class="business-header__mobile-nav">
+                <div class="business-header__mobile-nav__inner">
+                    {% if module.mobile.nav_label == true %}
+
+                    {% endif %}
+                    <a href="#business-header__mobile-nav__mmenu" class="mburger">
+                        <b></b>
+                        <b></b>
+                        <b></b>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {% elif module.header_variant == 'centered-menu'  %}
+    <div class="business-header__container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header--{{ module.header_variant }}--col-left">
+
+            <div class="business-header__icons business-header__icons--left">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'left' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'left' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'left' %}
+            <div class="business-header__content business-header__content--left">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                  extra_classes='business-social-links__icon',
+                  name='{{ social_icon }}',
+                  purpose='semantic',
+                  style='SOLID',
+                  title='{{ item.accessibility.title }}',
+                  unique_in_loop=True
+                %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                    name="{{ module.cs_settings.button_settings.icon.name }}"
+                    style="{{ module.cs_settings.button_settings.icon.type }}"
+                    unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                    icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                  %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-center">
+
+            <div class="business-header__logo business-header__logo--main">
+                {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+                {% set link = "//" ~ module.logo.link %}
+                {% else %}
+                {% set link = module.logo.link || "" %}
+                {% endunless %}
+
+                {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+                {% logo "hs_logo_widget"
+                  override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                  alt='{{ module.logo.img.alt }}',
+                  src='{{ module.logo.img.src }}',
+                  link='{{ link }}',
+                  width='{{ module.logo.img.width }}',
+                  height='{{ module.logo.img.height }}',
+                  open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                %}
+                {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+
+                {% logo "hs_logo_widget"
+                  heading_level="{{ module.logo.heading_level }}",
+                  link='{{ link }}',
+                  open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                  override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                  src='',
+                  suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                %}
+
+                {% else %}
+                {% logo "hs_logo_widget"
+                  link='{{ link }}',
+                  open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                %}
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-right">
+
+            <div class="business-header__icons">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'right' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'right' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'right' %}
+            <div class="business-header__content">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                  extra_classes='business-social-links__icon',
+                  name='{{ social_icon }}',
+                  purpose='semantic',
+                  style='SOLID',
+                  title='{{ item.accessibility.title }}',
+                  unique_in_loop=True
+                %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                    name="{{ module.cs_settings.button_settings.icon.name }}"
+                    style="{{ module.cs_settings.button_settings.icon.type }}"
+                    unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                    icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                  %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__navigation">
+            {% macro defaultItemClasses() %}
+            {{
+              {
+                'class': 'business-no-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro childClasses() %}
+            {{
+              {
+                'class': 'business-has-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeNode() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-item',
+                'aria-current': 'page'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeBranch() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-branch'
+              }|xmlattr
+
+             }}
+            {% endmacro %}
+            {% macro linkTarget() %}
+            {{
+              {
+                'target': '_blank',
+                'rel': 'noopener'
+              }|xmlattr
+            }}
+            {% endmacro %}
+            {% macro link(node) %}
+            <li {{ childClasses() if node.children else defaultItemClasses() }}>
+                <span><a href="{{ node.url if node.url else 'javascript:;' }}" class="business-menu-link" {{ activeBranch() if node.activeBranch }} {{ activeNode() if node.activeNode }} {{ linkTarget() if node.linkTarget }}><span>{{ node.label }}</span>{% if node.children %}<span class="business-menu-chevron"><svg width="16" height="16" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g transform="scale(0.333333)"><path fill="#000" d="M35.586,15.586c0.781,-0.781 2.047,-0.781 2.828,0c0.781,0.781 0.781,2.047 0,2.828l-14,14c-0.781,0.781 -2.047,0.781 -2.828,0l-14,-14c-0.781,-0.781 -0.781,-2.047 0,-2.828c0.781,-0.781 2.047,-0.781 2.828,0l12.586,12.586l12.586,-12.586Z"></path></g></svg></span>{% endif %}</a></span>
+
+                {% if node.children %}
+                {{ renderNavigation(node) }}
+                {% endif %}
+            </li>
+            {% endmacro %}
+            {% macro renderNavigation(menuTree) %}
+            {% set level = level + 1 %}
+            <ul class="business-submenu level-{{ level }}">
+                {% for node in menuTree.children %}
+                {{ link(node) }}
+                {% endfor %}
+            </ul>
+            {% endmacro %}
+            <nav aria-label="Main menu" class="business-navigation-primary">
+                {{ renderNavigation(menu(module.primary_menu.menu)) }} 
+            </nav>
+        </div>
+
+    </div>
+    {% endif %}
+
+    <div class="business-header__container business-content-wrapper business-header--mobile">
+
+        <div class="business-header__logo business-header__logo--main">
+
+            {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+            {% set link = "//" ~ module.logo.link %}
+            {% else %}
+            {% set link = module.logo.link || "" %}
+            {% endunless %}
+
+            {% if module.mobile.logo.src %}
+
+            {% logo "hs_logo_widget"
+                        override_inherited_src="{{ module.mobile.logo.override_inherited_src }}"
+                        src="{{ module.mobile.logo.src }}"
+                        alt="{{ module.mobile.logo.alt }}"
+                        width="{{ module.mobile.logo.width }}"
+                        height="{{ module.mobile.logo.height }}"
+                        link='{{ link }}'
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    %}
+
+            {% else %}
+
+            {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                        override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                        alt='{{ module.logo.img.alt }}',
+                        src='{{ module.logo.img.src }}',
+                        link='{{ link }}',
+                        width='{{ module.logo.img.width }}',
+                        height='{{ module.logo.img.height }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      %}
+            {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                        heading_level="{{ module.logo.heading_level }}",
+                        link='{{ link }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                        override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                        src='',
+                        suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                      %}
+            {% else %}
+            {% logo "hs_logo_widget"
+                        link='{{ link }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      %}
+            {% endif %}
+
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__mobile-nav">
+            <div class="business-header__mobile-nav__inner">
+                {% if module.mobile.nav_label == true %}
+
+                {% endif %}
+                <a href="#business-header__mobile-nav__mmenu" class="mburger">
+                    <b></b>
+                    <b></b>
+                    <b></b>
+                </a>
+            </div>
+        </div>
+
+        <div class="business-header__content">
+
+            {% if module.cs_settings.rich_text %}
+            <div class="business-header__content--rich-text">
+                {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.social_media %}
+            <div class="business-social-links">
+                {% for item in module.cs_settings.sm_settings.social_links %}
+                {% set href = item.social_link.url.href %}
+                {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                {% set href = "mailto:" + href %}
+                {% endif %}
+                {% set rel = [] %}
+                {% if item.social_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if item.social_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                {% if item.social_account != 'custom_icon' %}
+                {% set social_icon = item.social_account %}
+                {% else %}
+                {% set social_icon = item.custom_icon.name %}
+                {% endif %}
+
+                <a class="business-social-links__link" href="{{ href }}"
+                   {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                    {% icon
+                    extra_classes='business-social-links__icon',
+                    name='{{ social_icon }}',
+                    purpose='semantic',
+                    style='SOLID',
+                    title='{{ item.accessibility.title }}',
+                    unique_in_loop=True
+                  %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.button %}
+            {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+            {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+            {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+            {% endunless %}
+            {% endif %}
+
+            {% set rel = [] %}
+            {% if module.cs_settings.button_settings.button_link.no_follow %}
+            {% do rel.append("nofollow") %}
+            {% endif %}
+            {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+            {% do rel.append("noopener") %}
+            {% endif %}
+
+            <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                   {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                   >
+
+                    {{ module.cs_settings.button_settings.button_text }}
+
+                    {% if module.cs_settings.button_settings.custom_icon %}
+                    {% icon
+                      name="{{ module.cs_settings.button_settings.icon.name }}"
+                      style="{{ module.cs_settings.button_settings.icon.type }}"
+                      unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                      icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                    %}
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+{% if module.enable %}
+<div class="business-header--{{ name }} business-sticky-header {{ mega_menu_class }}">
+
+    {% if module.header_variant == 'default'  %}
+    <div class="business-header__container container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header__logo business-header__logo--main">
+
+            {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+            {% set link = "//" ~ module.logo.link %}
+            {% else %}
+            {% set link = module.logo.link || "" %}
+            {% endunless %}
+
+            {% if module.sticky.logo.src %}
+
+            {% logo "hs_logo_widget"
+                    override_inherited_src="{{ module.sticky.logo.override_inherited_src }}"
+                    src="{{ module.sticky.logo.src }}"
+                    alt="{{ module.sticky.logo.alt }}"
+                    width="{{ module.sticky.logo.width }}"
+                    height="{{ module.sticky.logo.height }}"
+                    link='{{ link }}'
+                    open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+
+                %}
+
+            {% else %}
+
+            {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                    override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                    alt='{{ module.logo.img.alt }}',
+                    src='{{ module.logo.img.src }}',
+                    link='{{ link }}',
+                    width='{{ module.logo.img.width }}',
+                    height='{{ module.logo.img.height }}',
+                    open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                  %}
+            {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                    heading_level="{{ module.logo.heading_level }}",
+                    link='{{ link }}',
+                    open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                    src='',
+                    suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                  %}
+            {% else %}
+            {% logo "hs_logo_widget"
+                    link='{{ link }}',
+                    open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                  %}
+            {% endif %}
+
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__navigation business-header__{{ module.style.navigation_align }}">
+            {% macro defaultItemClasses() %}
+            {{
+              {
+                'class': 'business-no-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro childClasses() %}
+            {{
+              {
+                'class': 'business-has-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeNode() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-item',
+                'aria-current': 'page'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeBranch() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-branch'
+              }|xmlattr
+
+             }}
+            {% endmacro %}
+            {% macro linkTarget() %}
+            {{
+              {
+                'target': '_blank',
+                'rel': 'noopener'
+              }|xmlattr
+            }}
+            {% endmacro %}
+            {% macro link(node) %}
+            <li {{ childClasses() if node.children else defaultItemClasses() }}>
+                <span><a href="{{ node.url if node.url else 'javascript:;' }}" class="business-menu-link" {{ activeBranch() if node.activeBranch }} {{ activeNode() if node.activeNode }} {{ linkTarget() if node.linkTarget }}><span>{{ node.label }}</span>{% if node.children %}<span class="business-menu-chevron"><svg width="16" height="16" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g transform="scale(0.333333)"><path fill="#000" d="M35.586,15.586c0.781,-0.781 2.047,-0.781 2.828,0c0.781,0.781 0.781,2.047 0,2.828l-14,14c-0.781,0.781 -2.047,0.781 -2.828,0l-14,-14c-0.781,-0.781 -0.781,-2.047 0,-2.828c0.781,-0.781 2.047,-0.781 2.828,0l12.586,12.586l12.586,-12.586Z"></path></g></svg></span>{% endif %}</a></span>
+
+                {% if node.children %}
+                {{ renderNavigation(node) }}
+                {% endif %}
+            </li>
+            {% endmacro %}
+            {% macro renderNavigation(menuTree) %}
+            {% set level = level + 1 %}
+            <ul class="business-submenu level-{{ level }}">
+                {% for node in menuTree.children %}
+                {{ link(node) }}
+                {% endfor %}
+            </ul>
+            {% endmacro %}
+            <nav aria-label="Main menu" class="business-navigation-primary">
+                {{ renderNavigation(menu(module.primary_menu.menu)) }} 
+            </nav>
+        </div>
+
+        <div class="business-header__icons">
+
+            {% if module.lg_switcher %}
+            {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+            <div class="business-header__language-switcher">
+                <div class="business-header__language-switcher--label">
+                    <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                    <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                    {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% if module.search == true %}
+            <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+            </a>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__content">
+
+            {% if module.cs_settings.rich_text %}
+            <div class="business-header__content--rich-text">
+                {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.social_media %}
+            <div class="business-social-links">
+                {% for item in module.cs_settings.sm_settings.social_links %}
+                {% set href = item.social_link.url.href %}
+                {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                {% set href = "mailto:" + href %}
+                {% endif %}
+                {% set rel = [] %}
+                {% if item.social_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if item.social_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                {% if item.social_account != 'custom_icon' %}
+                {% set social_icon = item.social_account %}
+                {% else %}
+                {% set social_icon = item.custom_icon.name %}
+                {% endif %}
+
+                <a class="business-social-links__link" href="{{ href }}"
+                   {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                    {% icon
+                extra_classes='business-social-links__icon',
+                name='{{ social_icon }}',
+                purpose='semantic',
+                style='SOLID',
+                title='{{ item.accessibility.title }}',
+                unique_in_loop=True
+              %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.button %}
+            {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+            {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+            {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+            {% endunless %}
+            {% endif %}
+
+            {% set rel = [] %}
+            {% if module.cs_settings.button_settings.button_link.no_follow %}
+            {% do rel.append("nofollow") %}
+            {% endif %}
+            {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+            {% do rel.append("noopener") %}
+            {% endif %}
+
+            <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                   {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                   >
+
+                    {{ module.cs_settings.button_settings.button_text }}
+
+                    {% if module.cs_settings.button_settings.custom_icon %}
+                    {% icon
+                  name="{{ module.cs_settings.button_settings.icon.name }}"
+                  style="{{ module.cs_settings.button_settings.icon.type }}"
+                  unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                  icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                %}
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+    {% elif module.header_variant == 'off-canvas-menu'  %}
+    <div class="business-header__container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header__logo business-header__logo--main">
+
+            {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+            {% set link = "//" ~ module.logo.link %}
+            {% else %}
+            {% set link = module.logo.link || "" %}
+            {% endunless %}
+
+            {% if module.sticky.logo.src %}
+
+            {% logo "hs_logo_widget"
+                        override_inherited_src="{{ module.sticky.logo.override_inherited_src }}"
+                        src="{{ module.sticky.logo.src }}"
+                        alt="{{ module.sticky.logo.alt }}"
+                        width="{{ module.sticky.logo.width }}"
+                        height="{{ module.sticky.logo.height }}"
+                        link='{{ link }}'
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+
+                    %}
+
+            {% else %}
+
+            {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                        override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                        alt='{{ module.logo.img.alt }}',
+                        src='{{ module.logo.img.src }}',
+                        link='{{ link }}',
+                        width='{{ module.logo.img.width }}',
+                        height='{{ module.logo.img.height }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      %}
+            {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                        heading_level="{{ module.logo.heading_level }}",
+                        link='{{ link }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                        override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                        src='',
+                        suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                      %}
+            {% else %}
+            {% logo "hs_logo_widget"
+                        link='{{ link }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      %}
+            {% endif %}
+
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__icons">
+
+            {% if module.lg_switcher %}
+            {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+            <div class="business-header__language-switcher">
+                <div class="business-header__language-switcher--label">
+                    <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                    <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                    {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% if module.search == true %}
+            <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+            </a>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__content">
+
+            {% if module.cs_settings.rich_text %}
+            <div class="business-header__content--rich-text">
+                {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.social_media %}
+            <div class="business-social-links">
+                {% for item in module.cs_settings.sm_settings.social_links %}
+                {% set href = item.social_link.url.href %}
+                {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                {% set href = "mailto:" + href %}
+                {% endif %}
+                {% set rel = [] %}
+                {% if item.social_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if item.social_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                {% if item.social_account != 'custom_icon' %}
+                {% set social_icon = item.social_account %}
+                {% else %}
+                {% set social_icon = item.custom_icon.name %}
+                {% endif %}
+
+                <a class="business-social-links__link" href="{{ href }}"
+                   {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                    {% icon
+                    extra_classes='business-social-links__icon',
+                    name='{{ social_icon }}',
+                    purpose='semantic',
+                    style='SOLID',
+                    title='{{ item.accessibility.title }}',
+                    unique_in_loop=True
+                  %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.button %}
+            {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+            {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+            {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+            {% endunless %}
+            {% endif %}
+
+            {% set rel = [] %}
+            {% if module.cs_settings.button_settings.button_link.no_follow %}
+            {% do rel.append("nofollow") %}
+            {% endif %}
+            {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+            {% do rel.append("noopener") %}
+            {% endif %}
+
+            <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                   {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                   >
+
+                    {{ module.cs_settings.button_settings.button_text }}
+
+                    {% if module.cs_settings.button_settings.custom_icon %}
+                    {% icon
+                      name="{{ module.cs_settings.button_settings.icon.name }}"
+                      style="{{ module.cs_settings.button_settings.icon.type }}"
+                      unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                      icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                    %}
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__mobile-nav">
+            <div class="business-header__mobile-nav__inner">
+                {% if module.mobile.nav_label == true %}
+
+                {% endif %}
+                <a href="#business-header__mobile-nav__mmenu" class="mburger">
+                    <b></b>
+                    <b></b>
+                    <b></b>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    {% elif module.header_variant == 'centered-logo'  %}
+    <div class="business-header__container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header--{{ module.header_variant }}--col-left">
+
+            <div class="business-header__icons business-header__icons--left">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'left' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'left' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search" >
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'left' %}
+            <div class="business-header__content business-header__content--left">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                      extra_classes='business-social-links__icon',
+                      name='{{ social_icon }}',
+                      purpose='semantic',
+                      style='SOLID',
+                      title='{{ item.accessibility.title }}',
+                      unique_in_loop=True
+                    %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                        name="{{ module.cs_settings.button_settings.icon.name }}"
+                        style="{{ module.cs_settings.button_settings.icon.type }}"
+                        unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                        icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                      %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-center">
+
+            <div class="business-header__logo business-header__logo--main">
+
+                {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+                {% set link = "//" ~ module.logo.link %}
+                {% else %}
+                {% set link = module.logo.link || "" %}
+                {% endunless %}
+
+                {% if module.sticky.logo.src %}
+
+                {% logo "hs_logo_widget"
+                          override_inherited_src="{{ module.sticky.logo.override_inherited_src }}"
+                          src="{{ module.sticky.logo.src }}"
+                          alt="{{ module.sticky.logo.alt }}"
+                          width="{{ module.sticky.logo.width }}"
+                          height="{{ module.sticky.logo.height }}"
+                          link='{{ link }}'
+                          open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+
+                      %}
+
+                {% else %}
+
+                {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+                {% logo "hs_logo_widget"
+                          override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                          alt='{{ module.logo.img.alt }}',
+                          src='{{ module.logo.img.src }}',
+                          link='{{ link }}',
+                          width='{{ module.logo.img.width }}',
+                          height='{{ module.logo.img.height }}',
+                          open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                        %}
+                {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+                {% logo "hs_logo_widget"
+                          heading_level="{{ module.logo.heading_level }}",
+                          link='{{ link }}',
+                          open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                          override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                          src='',
+                          suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                        %}
+                {% else %}
+                {% logo "hs_logo_widget"
+                          link='{{ link }}',
+                          open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                        %}
+                {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-right">
+
+            <div class="business-header__icons">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'right' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'right' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'right' %}
+            <div class="business-header__content">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                      extra_classes='business-social-links__icon',
+                      name='{{ social_icon }}',
+                      purpose='semantic',
+                      style='SOLID',
+                      title='{{ item.accessibility.title }}',
+                      unique_in_loop=True
+                    %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                        name="{{ module.cs_settings.button_settings.icon.name }}"
+                        style="{{ module.cs_settings.button_settings.icon.type }}"
+                        unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                        icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                      %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+            <div class="business-header__mobile-nav">
+                <div class="business-header__mobile-nav__inner">
+                    {% if module.mobile.nav_label == true %}
+
+                    {% endif %}
+                    <a href="#business-header__mobile-nav__mmenu" class="mburger">
+                        <b></b>
+                        <b></b>
+                        <b></b>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {% elif module.header_variant == 'centered-menu'  %}
+    <div class="business-header__container business-content-wrapper business-header--{{ module.header_variant }}">
+
+        <div class="business-header--{{ module.header_variant }}--col-left">
+
+            <div class="business-header__icons business-header__icons--left">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'left' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'left' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'left' %}
+            <div class="business-header__content business-header__content--left">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                  extra_classes='business-social-links__icon',
+                  name='{{ social_icon }}',
+                  purpose='semantic',
+                  style='SOLID',
+                  title='{{ item.accessibility.title }}',
+                  unique_in_loop=True
+                %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                    name="{{ module.cs_settings.button_settings.icon.name }}"
+                    style="{{ module.cs_settings.button_settings.icon.type }}"
+                    unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                    icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                  %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-center">
+
+            <div class="business-header__logo business-header__logo--main">
+
+                {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+                {% set link = "//" ~ module.logo.link %}
+                {% else %}
+                {% set link = module.logo.link || "" %}
+                {% endunless %}
+
+                {% if module.sticky.logo.src %}
+
+                {% logo "hs_logo_widget"
+                      override_inherited_src="{{ module.sticky.logo.override_inherited_src }}"
+                      src="{{ module.sticky.logo.src }}"
+                      alt="{{ module.sticky.logo.alt }}"
+                      width="{{ module.sticky.logo.width }}"
+                      height="{{ module.sticky.logo.height }}"
+                      link='{{ link }}'
+                      open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+
+                  %}
+
+                {% else %}
+
+                {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+                {% logo "hs_logo_widget"
+                      override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                      alt='{{ module.logo.img.alt }}',
+                      src='{{ module.logo.img.src }}',
+                      link='{{ link }}',
+                      width='{{ module.logo.img.width }}',
+                      height='{{ module.logo.img.height }}',
+                      open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    %}
+                {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+                {% logo "hs_logo_widget"
+                      heading_level="{{ module.logo.heading_level }}",
+                      link='{{ link }}',
+                      open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                      src='',
+                      suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                    %}
+                {% else %}
+                {% logo "hs_logo_widget"
+                      link='{{ link }}',
+                      open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    %}
+                {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="business-header--{{ module.header_variant }}--col-right">
+
+            <div class="business-header__icons">
+
+                {% if module.lg_switcher %}
+                {% if module.lg_switcher_settings.lg_switcher_location == 'right' %}
+                {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+                <div class="business-header__language-switcher">
+                    <div class="business-header__language-switcher--label">
+                        <div class="business-header__language-switcher--label-icon"><svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M9,19.821v1.045h2c0.553,0 1,0.446 1,0.995c0,0.549 -0.447,0.994 -1,0.994h-6c-0.553,0 -1,-0.445 -1,-0.994c0,-0.549 0.447,-0.995 1,-0.995h2v-1.073c-2.01,-0.181 -3.916,-0.868 -5.552,-2.079c-0.443,-0.327 -0.535,-0.95 -0.206,-1.392c0.329,-0.439 0.957,-0.532 1.4,-0.203c1.558,1.153 3.412,1.763 5.358,1.763c4.963,0 9,-4.016 9,-8.952c0,-2.84 -1.315,-5.451 -3.61,-7.164c-0.442,-0.33 -0.531,-0.953 -0.2,-1.392c0.332,-0.439 0.958,-0.529 1.401,-0.199c2.802,2.092 4.409,5.283 4.409,8.755c0,5.697 -4.402,10.386 -10,10.891Zm7,-10.891c0,4.387 -3.589,7.957 -8,7.957c-4.411,0 -8,-3.57 -8,-7.957c0,-4.388 3.589,-7.958 8,-7.958c4.411,4.44089e-16 8,3.57 8,7.958Zm-8,-5.968c-3.309,4.44089e-16 -6,2.677 -6,5.968c0,3.291 2.691,5.968 6,5.968c3.309,0 6,-2.677 6,-5.968c0,-3.291 -2.691,-5.968 -6,-5.968Z" transform="scale(1.05033)" fill-rule="evenodd" fill="#000"></path></svg></div>
+                        <div class="business-header__language-switcher--label-current"> {{ locale_name(locale) }}</div>
+                        {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% endif %}
+                {% if module.search == true %}
+                {% if module.search_settings.search_location == 'right' %}
+                <a href="#business-header__icons--search__mmenu" class="business-header__icons--search">
+                    <svg version="1.1" viewBox="0 0 23.906 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M23.608,23.707c-0.195,0.195 -0.45,0.293 -0.705,0.293c-0.255,0 -0.51,-0.098 -0.704,-0.293l-7.653,-7.682c-1.535,1.233 -3.477,1.975 -5.59,1.975c-4.944,0 -8.967,-4.037 -8.967,-8.999c-7.77156e-16,-4.963 4.023,-9.001 8.967,-9.001c4.944,0 8.966,4.038 8.966,9.001c0,2.121 -0.739,4.07 -1.967,5.61l7.653,7.682c0.389,0.39 0.389,1.024 0,1.414Zm-14.652,-21.707c-3.846,0 -6.974,3.141 -6.974,7.001c0,3.859 3.128,6.999 6.974,6.999c3.845,0 6.974,-3.14 6.974,-6.999c0,-3.86 -3.129,-7.001 -6.974,-7.001Z" fill="#000" fill-rule="evenodd"></path></svg>
+                </a>
+                {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if module.cs_settings.cs_location == 'right' %}
+            <div class="business-header__content">
+
+                {% if module.cs_settings.rich_text %}
+                <div class="business-header__content--rich-text">
+                    {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.social_media %}
+                <div class="business-social-links">
+                    {% for item in module.cs_settings.sm_settings.social_links %}
+                    {% set href = item.social_link.url.href %}
+                    {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                    {% set href = "mailto:" + href %}
+                    {% endif %}
+                    {% set rel = [] %}
+                    {% if item.social_link.no_follow %}
+                    {% do rel.append("nofollow") %}
+                    {% endif %}
+                    {% if item.social_link.open_in_new_tab %}
+                    {% do rel.append("noopener") %}
+                    {% endif %}
+
+                    {% if item.social_account != 'custom_icon' %}
+                    {% set social_icon = item.social_account %}
+                    {% else %}
+                    {% set social_icon = item.custom_icon.name %}
+                    {% endif %}
+
+                    <a class="business-social-links__link" href="{{ href }}"
+                       {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                        {% icon
+                  extra_classes='business-social-links__icon',
+                  name='{{ social_icon }}',
+                  purpose='semantic',
+                  style='SOLID',
+                  title='{{ item.accessibility.title }}',
+                  unique_in_loop=True
+                %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if module.cs_settings.button %}
+                {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+                {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+                {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+                {% else %}
+                {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+                {% endunless %}
+                {% endif %}
+
+                {% set rel = [] %}
+                {% if module.cs_settings.button_settings.button_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                    <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                       {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                       {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                       >
+
+                        {{ module.cs_settings.button_settings.button_text }}
+
+                        {% if module.cs_settings.button_settings.custom_icon %}
+                        {% icon
+                    name="{{ module.cs_settings.button_settings.icon.name }}"
+                    style="{{ module.cs_settings.button_settings.icon.type }}"
+                    unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                    icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                  %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__navigation">
+            {% macro defaultItemClasses() %}
+            {{
+              {
+                'class': 'business-no-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro childClasses() %}
+            {{
+              {
+                'class': 'business-has-submenu business-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeNode() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-item',
+                'aria-current': 'page'
+              }|xmlattr
+             }}
+            {% endmacro %}
+            {% macro activeBranch() %}
+            {{
+              {
+                'class': 'business-menu-link business-active-branch'
+              }|xmlattr
+
+             }}
+            {% endmacro %}
+            {% macro linkTarget() %}
+            {{
+              {
+                'target': '_blank',
+                'rel': 'noopener'
+              }|xmlattr
+            }}
+            {% endmacro %}
+            {% macro link(node) %}
+            <li {{ childClasses() if node.children else defaultItemClasses() }}>
+                <span><a href="{{ node.url if node.url else 'javascript:;' }}" class="business-menu-link" {{ activeBranch() if node.activeBranch }} {{ activeNode() if node.activeNode }} {{ linkTarget() if node.linkTarget }}><span>{{ node.label }}</span>{% if node.children %}<span class="business-menu-chevron"><svg width="16" height="16" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g transform="scale(0.333333)"><path fill="#000" d="M35.586,15.586c0.781,-0.781 2.047,-0.781 2.828,0c0.781,0.781 0.781,2.047 0,2.828l-14,14c-0.781,0.781 -2.047,0.781 -2.828,0l-14,-14c-0.781,-0.781 -0.781,-2.047 0,-2.828c0.781,-0.781 2.047,-0.781 2.828,0l12.586,12.586l12.586,-12.586Z"></path></g></svg></span>{% endif %}</a></span>
+
+                {% if node.children %}
+                {{ renderNavigation(node) }}
+                {% endif %}
+            </li>
+            {% endmacro %}
+            {% macro renderNavigation(menuTree) %}
+            {% set level = level + 1 %}
+            <ul class="business-submenu level-{{ level }}">
+                {% for node in menuTree.children %}
+                {{ link(node) }}
+                {% endfor %}
+            </ul>
+            {% endmacro %}
+            <nav aria-label="Main menu" class="business-navigation-primary">
+                {{ renderNavigation(menu(module.primary_menu.menu)) }} 
+            </nav>
+        </div>
+
+    </div>
+    {% endif %}
+
+    <div class="business-header__container business-content-wrapper business-header--mobile">
+
+        <div class="business-header__logo business-header__logo--main">
+
+            {% unless (module.logo.link is string_startingwith "http") or (module.logo.link is string_startingwith "/") or (module.logo.link is string_startingwith "mailto") or (module.logo.link is string_startingwith "#") or !module.logo.link %}
+            {% set link = "//" ~ module.logo.link %}
+            {% else %}
+            {% set link = module.logo.link || "" %}
+            {% endunless %}
+
+            {% if module.mobile.logo.src %}
+
+            {% logo "hs_logo_widget"
+                        override_inherited_src="{{ module.mobile.logo.override_inherited_src }}"
+                        src="{{ module.mobile.logo.src }}"
+                        alt="{{ module.mobile.logo.alt }}"
+                        width="{{ module.mobile.logo.width }}"
+                        height="{{ module.mobile.logo.height }}"
+                        link='{{ link }}'
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                    %}
+
+            {% else %}
+
+            {% if module.logo.img.override_inherited_src && module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                        override_inherited_src='{{ module.logo.img.override_inherited_src  }}',
+                        alt='{{ module.logo.img.alt }}',
+                        src='{{ module.logo.img.src }}',
+                        link='{{ link }}',
+                        width='{{ module.logo.img.width }}',
+                        height='{{ module.logo.img.height }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      %}
+            {% elif module.logo.img.override_inherited_src && !module.logo.img.src %}
+            {% logo "hs_logo_widget"
+                        heading_level="{{ module.logo.heading_level }}",
+                        link='{{ link }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                        override_inherited_src='{{ module.logo.img.override_inherited_src }}',
+                        src='',
+                        suppress_company_name='{{ module.logo.img.suppress_company_name }}',
+                      %}
+            {% else %}
+            {% logo "hs_logo_widget"
+                        link='{{ link }}',
+                        open_in_new_tab='{{ module.logo.open_in_new_tab }}'
+                      %}
+            {% endif %}
+
+            {% endif %}
+
+        </div>
+
+        <div class="business-header__mobile-nav">
+            <div class="business-header__mobile-nav__inner">
+                {% if module.mobile.nav_label == true %}
+
+                {% endif %}
+                <a href="#business-header__mobile-nav__mmenu" class="mburger">
+                    <b></b>
+                    <b></b>
+                    <b></b>
+                </a>
+            </div>
+        </div>
+
+        <div class="business-header__content">
+
+            {% if module.cs_settings.rich_text %}
+            <div class="business-header__content--rich-text">
+                {% inline_rich_text field="cs_settings.rich_text_settings.content" value="{{ module.cs_settings.rich_text_settings.content }}" %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.social_media %}
+            <div class="business-social-links">
+                {% for item in module.cs_settings.sm_settings.social_links %}
+                {% set href = item.social_link.url.href %}
+                {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                {% set href = "mailto:" + href %}
+                {% endif %}
+                {% set rel = [] %}
+                {% if item.social_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if item.social_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                {% if item.social_account != 'custom_icon' %}
+                {% set social_icon = item.social_account %}
+                {% else %}
+                {% set social_icon = item.custom_icon.name %}
+                {% endif %}
+
+                <a class="business-social-links__link" href="{{ href }}"
+                   {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                    {% icon
+                    extra_classes='business-social-links__icon',
+                    name='{{ social_icon }}',
+                    purpose='semantic',
+                    style='SOLID',
+                    title='{{ item.accessibility.title }}',
+                    unique_in_loop=True
+                  %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if module.cs_settings.button %}
+            {% if module.cs_settings.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+            {% set href = 'mailto:' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% elif module.cs_settings.button_settings.button_link.url.href == '/' %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% unless (module.cs_settings.button_settings.button_link.url.href is string_containing '//') or !module.cs_settings.button_settings.button_link.url.href %}
+            {% set href = '/' ~ module.cs_settings.button_settings.button_link.url.href %}
+            {% else %}
+            {% set href = module.cs_settings.button_settings.button_link.url.href || '' %}
+            {% endunless %}
+            {% endif %}
+
+            {% set rel = [] %}
+            {% if module.cs_settings.button_settings.button_link.no_follow %}
+            {% do rel.append("nofollow") %}
+            {% endif %}
+            {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}
+            {% do rel.append("noopener") %}
+            {% endif %}
+
+            <div class="business-button-wrapper business-button-wrapper--{{ module.cs_settings.button_settings.align }}">
+                <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                   {% if module.cs_settings.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                   >
+
+                    {{ module.cs_settings.button_settings.button_text }}
+
+                    {% if module.cs_settings.button_settings.custom_icon %}
+                    {% icon
+                      name="{{ module.cs_settings.button_settings.icon.name }}"
+                      style="{{ module.cs_settings.button_settings.icon.type }}"
+                      unicode="{{ module.cs_settings.button_settings.icon.unicode }}"
+                      icon_set="{{ module.cs_settings.button_settings.icon.icon_set }}"
+                    %}
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>{% endif %}
+<div id="business-header__mobile-nav__mmenu" class="business-header__mobile-nav__mmenu" data-position="{{ module.mobile.menu_position }}">
+    <div>
+        {% if module.search == true %}
+        <div class="hs-search-field"> 
+            <div class="hs-search-field__bar"> 
+                <form action="/{{ site_settings.content_search_results_page_path }}">
+                    <input type="text" class="hs-search-field__input" name="term" autocomplete="off" aria-label="{{ module.search_settings.field_label || "Search" }}" placeholder="{{ module.search_settings.mobile_search.placeholder }}">
+                    {% if module.search_settings.content_types.website_pages %}
+                    <input type="hidden" name="type" value="SITE_PAGE">
+                    {% endif %}
+                    {% if module.search_settings.content_types.landing_pages %}
+                    <input type="hidden" name="type" value="LANDING_PAGE">
+                    {% endif %}
+                    {% if module.search_settings.content_types.blog_posts %}
+                    <input type="hidden" name="type" value="BLOG_POST">
+                    <input type="hidden" name="type" value="LISTING_PAGE">
+                    {% endif %}
+                    {% if module.search_settings.content_types.knowledge_articles %}
+                    <input type="hidden" name="type" value="KNOWLEDGE_ARTICLE">
+                    {% endif %}
+                    <button aria-label="Search">{% icon name="search" style="solid" %}</button>
+                </form>
+            </div>
+            <ul class="hs-search-field__suggestions"></ul>
+        </div>
+        {% endif %}
+
+        {% macro defaultItemClasses() %}
+        {{
+              {
+                'class': 'business-no-mobile-submenu business-mobile-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+        {% endmacro %}
+
+        {% macro childClasses() %}
+        {{
+              {
+                'class': 'business-has-mobile-submenu business-mobile-menu-item hs-skip-lang-url-rewrite'
+              }|xmlattr
+             }}
+        {% endmacro %}
+
+        {% macro activeNode() %}
+        {{
+              {
+                'class': 'business-mobile-menu-link business-active-item',
+                'aria-current': 'page'
+              }|xmlattr
+             }}
+        {% endmacro %}
+
+        {% macro activeBranch() %}
+        {{
+              {
+                'class': 'business-mobile-menu-link business-active-branch'
+              }|xmlattr
+
+             }}
+        {% endmacro %}
+
+        {% macro linkTarget() %}
+        {{
+              {
+                'target': '_blank',
+                'rel': 'noopener'
+              }|xmlattr
+            }}
+        {% endmacro %}
+
+        {% macro link(node) %}
+        <li {{ childClasses() if node.children else defaultItemClasses() }}>
+            <span><a href="{{ node.url if node.url else 'javascript:;' }}" class="business-mobile-menu-link" {{ activeBranch() if node.activeBranch }} {{ activeNode() if node.activeNode }} {{ linkTarget() if node.linkTarget }}><span>{{ node.label }}</span></a></span>
+
+            {% if node.children %}
+            {{ renderNavigation(node) }}
+            {% endif %}
+        </li>
+        {% endmacro %}
+
+        {% macro renderNavigation(menuTree) %}
+        {% set level = level + 1 %}
+        <ul class="business-mobile-menu-submenu level-{{ level }}">
+            {% for node in menuTree.children %}
+            {{ link(node) }}
+            {% endfor %}
+        </ul>
+        {% endmacro %}
+
+        {{ renderNavigation(menu(module.mobile_menu.menu)) }}
+
+        {% if module.lg_switcher %}
+        {% if content.translated_content.values()|selectattr('published')|length || is_listing_view && group.translations %}
+        <div class="business-header__mobile-nav__mmenu__language-switcher">
+            <div class="business-header__mobile-nav__mmenu__language-switcher--label-current">Current language: {{ locale_name(locale) }}</div>
+            {% language_switcher display_mode='{{ module.lg_switcher_settings.display_mode }}' %} 
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <div class="business-header__mobile-nav__mmenu__content">
+            {% if module.mobile_menu.rich_text %}
+            <div class="business-header__content--rich-text">
+                {% inline_rich_text field="module.mobile_menu.rich_text_settings.content" value="{{ module.mobile_menu.rich_text_settings.content }}" %}
+            </div>
+            {% endif %}
+
+            {% if module.mobile_menu.social_media %}
+            <div class="business-social-links">
+                {% for item in module.mobile_menu.sm_settings.social_links %}
+                {% set href = item.social_link.url.href %}
+                {% if item.social_link.url.type is equalto "EMAIL_ADDRESS" %}
+                {% set href = "mailto:" + href %}
+                {% endif %}
+                {% set rel = [] %}
+                {% if item.social_link.no_follow %}
+                {% do rel.append("nofollow") %}
+                {% endif %}
+                {% if item.social_link.open_in_new_tab %}
+                {% do rel.append("noopener") %}
+                {% endif %}
+
+                {% if item.social_account != 'custom_icon' %}
+                {% set social_icon = item.social_account %}
+                {% else %}
+                {% set social_icon = item.custom_icon.name %}
+                {% endif %}
+
+                <a class="business-social-links__link" href="{{ href }}"
+                   {% if item.social_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}>
+                    {% icon
+                    extra_classes='business-social-links__icon',
+                    name='{{ social_icon }}',
+                    purpose='semantic',
+                    style='SOLID',
+                    title='{{ item.accessibility.title }}',
+                    unique_in_loop=True
+                  %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if module.mobile_menu.button %}
+            {% if module.mobile_menu.button_settings.button_link.url.type is equalto 'EMAIL_ADDRESS' %}
+            {% set href = 'mailto:' ~ module.mobile_menu.button_settings.button_link.url.href %}
+            {% elif module.mobile_menu.button_settings.button_link.url.href == '/' %}
+            {% set href = module.mobile_menu.button_settings.button_link.url.href %}
+            {% else %}
+            {% unless (module.mobile_menu.button_settings.button_link.url.href is string_containing '//') or !module.mobile_menu.button_settings.button_link.url.href %}
+            {% set href = '/' ~ module.mobile_menu.button_settings.button_link.url.href %}
+            {% else %}
+            {% set href = module.mobile_menu.button_settings.button_link.url.href || '' %}
+            {% endunless %}
+            {% endif %}
+
+            {% set rel = [] %}
+            {% if module.mobile_menu.button_settings.button_link.no_follow %}
+            {% do rel.append("nofollow") %}
+            {% endif %}
+            {% if module.mobile_menu.button_settings.button_link.open_in_new_tab %}
+            {% do rel.append("noopener") %}
+            {% endif %}
+
+            <div class="business-button-wrapper business-button-wrapper--{{ module.mobile_menu.button_settings.align }}">
+                <a class="button 0 button-animation" href="{{ module.cs_settings.button_settings.button_link.url.href }}"
+                   {% if module.mobile_menu.button_settings.button_link.open_in_new_tab %}target="_blank"{% endif %}
+                   {% if rel %}rel="{{ rel|join(' ') }}"{% endif %}
+                   >
+
+
+                    {{ module.mobile_menu.button_settings.button_text }}
+
+                    {% if module.mobile_menu.button_settings.custom_icon %}
+                    {% icon
+                      name="{{ module.mobile_menu.button_settings.icon.name }}"
+                      style="{{ module.mobile_menu.button_settings.icon.type }}"
+                      unicode="{{ module.mobile_menu.button_settings.icon.unicode }}"
+                      icon_set="{{ module.mobile_menu.button_settings.icon.icon_set }}"
+                    %}
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+            {% if module.mobile_menu.form %}
+            {% form
+                        form_to_use="{{ module.mobile_menu.select_form.form_id }}"
+                        response_response_type="{{ module.mobile_menu.select_form.response_type }}"
+                        response_message="{{ module.mobile_menu.select_form.message }}"
+                        response_redirect_id="{{ module.mobile_menu.select_form.redirect_id }}"
+                        response_redirect_url="{{module.mobile_menu.select_form.redirect_url}}"
+                        gotowebinar_webinar_key="{{ module.mobile_menu.select_form.gotowebinar_webinar_key }}"
+                    %}
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+{% if module.search ==true %}
+<div id="business-header__icons--search__mmenu" class="business-header__icons--search__mmenu" style="background:{{ module.style.font.desktop_menu_color.search_header_color.background_color.color }};">
+    <div class="business-header__icons--search__mmenu__inner">
+        <div class="hs-search-field"> 
+            <div class="hs-search-field__bar"> 
+                <form action="/{{ site_settings.content_search_results_page_path }}">
+                    <input type="text" class="hs-search-field__input" name="term" autocomplete="off" aria-label="{{ module.search_settings.field_label || "Search" }}" placeholder="{{ module.search_settings.header_search.placeholder }}">
+                    {% if module.search_settings.content_types.website_pages %}
+                    <input type="hidden" name="type" value="SITE_PAGE">
+                    {% endif %}
+                    {% if module.search_settings.content_types.landing_pages %}
+                    <input type="hidden" name="type" value="LANDING_PAGE">
+                    {% endif %}
+                    {% if module.search_settings.content_types.blog_posts %}
+                    <input type="hidden" name="type" value="BLOG_POST">
+                    <input type="hidden" name="type" value="LISTING_PAGE">
+                    {% endif %}
+                    {% if module.search_settings.content_types.knowledge_articles %}
+                    <input type="hidden" name="type" value="KNOWLEDGE_ARTICLE">
+                    {% endif %}
+                </form>
+            </div>
+            <ul class="hs-search-field__suggestions"></ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% for item in module.mega_menu_settings.add_or_edit_mega_menu %}
+
+{% if item.number_of_columns == 'col2' %}
+{% set column_layouts = item.column_layouts_2  %}
+{% elif item.number_of_columns == 'col3' %}
+{% set column_layouts = item.column_layouts_3  %}
+{% elif item.number_of_columns == 'col4' %}
+{% set column_layouts = item.column_layouts_4  %}
+{% elif item.number_of_columns == 'col5' %}
+{% set column_layouts = item.column_layouts_5  %}
+{% elif item.number_of_columns == 'col6' %}
+{% set column_layouts = item.column_layouts_6  %}
+{% endif %}
+
+<div class="business-mega-menu mega-menu-{{ loop.index }} business-mega-menu--{{ item.number_of_columns }} business-mega-menu--{{ column_layouts }}" data-mega-menu-title="{{ item.mega_menu_name }}">
+    <div class="business-content-wrapper">
+
+        <div class="business-mega-menu__inner">
+
+            {% if item.number_of_columns == 'col1' || item.number_of_columns == 'col2' || item.number_of_columns == 'col3' || item.number_of_columns == 'col4' || item.number_of_columns == 'col5' || item.number_of_columns == 'col6' %}
+            <div class="business-mega-menu__col business-mega-menu__col1">
+                <div class="business-mega-menu__col__inner{% if item.column_1.menu_header %} business-mega-menu__col__inner--menu-header{% endif %}">
+                    {% inline_rich_text field="column_1.richtext" value="{{ item.column_1.rich_text }}" %}
+                    {% simple_menu flyouts='false', menu_tree="{{ item.column_1.menu }}" %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if item.number_of_columns == 'col2' || item.number_of_columns == 'col3' || item.number_of_columns == 'col4' || item.number_of_columns == 'col5' || item.number_of_columns == 'col6' %}
+            <div class="business-mega-menu__col business-mega-menu__col2">
+                <div class="business-mega-menu__col__inner{% if item.column_2.menu_header %} business-mega-menu__col__inner--menu-header{% endif %}">
+                    {% inline_rich_text field="column_2.richtext" value="{{ item.column_2.rich_text }}" %}
+                    {% simple_menu menu_tree="{{ item.column_2.menu }}" %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if item.number_of_columns == 'col3' || item.number_of_columns == 'col4' || item.number_of_columns == 'col5' || item.number_of_columns == 'col6' %}
+            <div class="business-mega-menu__col business-mega-menu__col3">
+                <div class="business-mega-menu__col__inner{% if item.column_3.menu_header %} business-mega-menu__col__inner--menu-header{% endif %}">
+                    {% inline_rich_text field="column_3.richtext" value="{{ item.column_3.richtext }}" %}
+                    {% simple_menu menu_tree="{{ item.column_3.menu }}" %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if item.number_of_columns == 'col4' || item.number_of_columns == 'col5' || item.number_of_columns == 'col6' %}
+            <div class="business-mega-menu__col business-mega-menu__col4">
+                <div class="business-mega-menu__col__inner{% if item.column_4.menu_header %} business-mega-menu__col__inner--menu-header{% endif %}">
+                    {% inline_rich_text field="column_4.richtext" value="{{ item.column_4.rich_text }}" %}
+                    {% simple_menu menu_tree="{{ item.column_4.menu }}" %}
+                </div>
+            </div>
+            {% endif %}	
+
+            {% if item.number_of_columns == 'col5' || item.number_of_columns == 'col6' %}
+            <div class="business-mega-menu__col business-mega-menu__col5">
+                <div class="business-mega-menu__col__inner{% if item.column_5.menu_header %} business-mega-menu__col__inner--menu-header{% endif %}">
+                    {% inline_rich_text field="column_5.richtext" value="{{ item.column_5.richtext }}" %}
+                    {% simple_menu menu_tree="{{ item.column_5.menu }}" %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if item.number_of_columns == 'col6' %}
+            <div class="business-mega-menu__col business-mega-menu__col6">
+                <div class="business-mega-menu__col__inner{% if item.column_6.menu_header %} business-mega-menu__col__inner--menu-header{% endif %}">
+                    {% inline_rich_text field="column_6.richtext" value="{{ item.column_6.rich_text }}" %}
+                    {% simple_menu menu_tree="{{ item.column_6.menu }}" %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+{% endfor %}
+
+
+{% set header_bg_color = module.style.color.desktop_menu_color.background_color %}
+{% set min_header_height = module.style.height.desktop_header_height ~ 'px' %}
+{% set header_primary_color =  module.style.color.desktop_menu_color.primary_color %}
+{% set header_secondary_color =  module.style.color.desktop_menu_color.secondary_color %}
+{% set header_nav_label_font_color = module.nav_label_font_color %}
+
+{% set logo_top_spacing = module.logo.top_spacing ~ 'px' %}
+{% set logo_right_spacing = module.logo.right_spacing ~ 'px' %}
+{% set logo_bottom_spacing = module.logo.bottom_spacing ~ 'px' %}
+{% set logo_left_spacing = module.logo.left_spacing ~ 'px' %}
+
+{% set header_content_width = module.cs_settings.cs_width %}
+
+
+{% set mobile_header_breakpoint = module.mobile.breakpoint ~ 'px' %}
+{% set min_mobile_header_breakpoint = module.mobile.breakpoint + 1 ~ 'px' %}
+{% set mobile_header_bg_color = module.style.font.mobile_menu_color.mobile_header.backgroudn_color %}
+{% set mobile_header_primary_color = module.style.font.mobile_menu_color.mobile_header.primary_color %}
+{% set mobile_header_secondary_color = module.style.font.mobile_menu_color.mobile_header.secondary_color %}
+{% set mobile_nav_label_font = module.mobile.nav_label_font %}
+{% set mobile_nav_label_font_transform = module.mobile.nav_label_font_transform %}
+{% set mobile_nav_label_letter_spacing = module.mobile.nav_label_letter_spacing ~ 'px' %}
+{% set sticky_header_bg_color = module.style.font.desktop_menu_color.sticky_header.backgroudn_color %}
+{% set sticky_header_primary_color = module.style.font.desktop_menu_color.sticky_header.primary_color %}
+{% set sticky_header_secondary_color = module.style.font.desktop_menu_color.sticky_header.secondary_color %}
+{% set sticky_header_menu_color = module.sticky.menu_color %}
+{% set sticky_header_sticky.menu_hover_color = module.style.font.desktop_menu_color.sticky_header.link_hover_color %}
+{% set sticky_nav_label_font_color =  module.style.font.desktop_menu_color.sticky_header.menu_color %}
+{% set header_search_border_color = module.search_settings.header_search.border_color %}
+
+{% require_css %}
+<style>
+
+
+    .business-header__logo.business-header__logo--main:after {
+        content: '';
+        position: absolute;
+        right: 10px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        height: 100%;
+        background: #000;
+    }
+
+
+    @media (min-width: {{ min_mobile_header_breakpoint }}) {
+        {#.`-header--{{ name }} {
+            background-color: rgba({{ header_bg_color.color|convert_rgb }}, {{ header_bg_color.opacity / 100 }});
+        }#}
+    }
+
+    .business-header--{{ name }} .business-header--mobile {
+        background-color: rgba({{ mobile_header_bg_color.color|convert_rgb }}, {{ mobile_header_bg_color.opacity / 100 }});
+    }
+
+    .business-header--{{ name }}.business-sticky-header { left:0;
+        background-color: rgba({{ sticky_header_bg_color.color|convert_rgb }}, {{ sticky_header_bg_color.opacity / 100 }});
+    }
+
+    .business-header__container{
+        min-height: {{ min_header_height }};
+    }
+
+    .business-header--{{ name }} .business-header__logo--main{
+        {{ module.style.spacing.logo.menu_spacing.css }}
+    }
+
+    .business-header--{{ name }} .business-submenu.level-1 > li > span a{
+        {{ module.style.spacing.section.menu_item.menu_spacing.css }}
+        color: {{module.style.font.desktop_menu_color.menu_color.color_field.color }};
+        font-size:{{ module.style.font.desktop_menu_color.menu_color.font_size  }}px;
+        font-weight:{{ module.style.font.desktop_menu_color.menu_color.font_weight }};
+    }
+
+    .business-header--{{ name }} .business-submenu.level-1 > li > span a:hover,
+    .business-header--{{ name }} .business-submenu.level-1 > li > span a.business-active-item{
+        color: {{ module.style.font.desktop_menu_color.menu_color.menu_hover_color.color  }};
+        text-decoration:none;
+    }
+
+    .business-header--{{ name }} .business-submenu.level-1 > li > span a:hover .business-menu-chevron svg path{
+        fill: {{ module.style.font.desktop_menu_color.menu_color.menu_hover_color.color  }};
+    }
+
+    .business-header--{{ name }} .business-menu-chevron svg path{
+        fill:{{ module.style.font.desktop_menu_color.drop_down_menu_color.icon_color.color }};
+    }
+
+    .business-header--{{ name }} .business-submenu.level-1 > li > span a > span:not(.business-menu-chevron):after {
+        background-color: {{ module.style.font.desktop_menu_color.menu_color.color_field.color }};
+    }
+    .business-header--{{ name }} .business-has-submenu .business-submenu .business-menu-item{border-bottom: solid 1px #e4dfdf;}
+    .business-header--{{ name }} .business-has-submenu .business-submenu .business-menu-item:last-child{border-bottom: 0px;}
+    .business-header--{{ name }} .business-has-submenu .business-submenu a {
+        color: {{ module.style.font.desktop_menu_color.drop_down_menu_color.color.color  }};
+        font-size: {{ module.style.font.desktop_menu_color.drop_down_menu_color.font_size }}px;
+        font-weight:{{ module.style.font.desktop_menu_color.drop_down_menu_color.font_weight }};
+    }
+
+    .business-header--{{ name }} .business-has-submenu .business-submenu a:hover{
+        color: {{ module.style.font.desktop_menu_color.drop_down_menu_color.hover_color.color }};
+        text-decoration:none;
+    }
+
+    .business-header--{{ name }} .business-has-submenu .business-submenu a > span:not(.business-menu-chevron):after {
+        background-color: {{ module.style.font.desktop_menu_color.menu_color.menu_hover_color.color }};
+    }
+
+    .business-header--{{ name }} .business-has-submenu .business-has-submenu .business-menu-chevron svg path{
+        fill: {{ module.primary_menu.menu_font.color }};
+    }
+
+
+    .business-header--{{ name }} .business-has-submenu>.business-submenu>.business-has-submenu>.business-submenu {
+        border-color: {{ module.primary_menu.child_menu_border_color.color }};
+    }
+
+    .business-header--{{ name }} .business-header__mobile-nav .mburger b{
+        background:{{ module.style.font.mobile_menu_color.mobile_header.open_menu_color.color }};
+    }
+    .business-header--{{ name }} .business-header__icons--search svg path {
+        fill:{{ module.style.font.desktop_menu_color.search_header_color.icon_color.color }};
+    }
+
+    .business-header--{{ name }} .business-header__icons--search:hover svg path {
+        fill: {{ module.style.font.desktop_menu_color.search_header_color.icon_hover_color.color }};
+    }
+
+    .business-header--{{ name }} .business-header__language-switcher--label-icon svg path{
+        fill:{{ module.style.font.desktop_menu_color.language_switcher_settings.icon_color.color }};
+    }
+
+    .business-header--{{ name }} .business-header__language-switcher--label:hover .business-header__language-switcher--label-icon svg path{
+        fill:{{ module.style.font.desktop_menu_color.language_switcher_settings.icon_hover_color.color }};
+    }
+    {% if module.lg_switcher %}
+    .business-header--{{ name }} .business-header__language-switcher--label-current {
+        font-weight:{{ module.style.font.desktop_menu_color.language_switcher_settings.font_weight  }};
+        color: {{ module.style.font.desktop_menu_color.language_switcher_settings.color_field_3.color }};
+        font-size:{{ module.style.font.desktop_menu_color.language_switcher_settings.font_size  }}px;
+    }
+    {% endif %}
+
+    .business-header--{{ name }} .business-header__language-switcher--label:hover .business-header__language-switcher--label-current {
+        color:{{ module.style.font.desktop_menu_color.language_switcher_settings.label_hover_color.color }};
+
+    }
+
+
+    .business-header--{{ name }} .business-header__logo--main {
+        flex: none;
+    }
+
+
+
+    {% if header_content_width != 0 %}
+    .business-header--{{ name }} .business-header__content{
+        width: {{ header_content_width ~ 'px' }};
+    }
+    {% endif %}
+
+    @media (max-width: {{ mobile_header_breakpoint }}) {
+        .business-header--{{ name }} .business-header__logo--main {
+            flex-grow: 1;
+        }
+        .business-header__mobile-nav__mmenu .hs-search-field {
+            padding: 20px;
+        }
+        .business-header--{{ name }} .business-header--mobile{
+            min-height: {{ module.style.height.mobile_header }}px;
+        }
+    }
+    @media (max-width: {{ mobile_header_breakpoint }}) {
+        .business-header--{{ name }} .business-header--mobile {
+            display: flex;
+        }
+    }
+    @media (max-width: {{ mobile_header_breakpoint }}) {
+        .business-header--{{ name }} .business-header__content {
+            display: none;
+        }
+    }
+    @media (max-width: {{ mobile_header_breakpoint }}) {
+        .business-header--{{ name }} .business-header__container:not(.business-header--mobile) {
+            display: none;
+        }
+    }
+    @media (min-width: {{ min_mobile_header_breakpoint }}) {
+        .business-header--{{ name }}.business-header--transparent-true{
+            position: absolute;
+            width: 100%;
+            z-index: 1;
+        }
+    }
+    @media (max-width: {{ mobile_header_breakpoint }}) {
+        .business-header--{{ name }}.business-header--mobile-transparent-true{
+            position: absolute;
+            width: 100%;
+            z-index: 1;
+        }
+    }
+
+
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-header__icons--search svg path {
+        fill:{{ module.style.font.desktop_menu_color.sticky_header.search_icon_color.color }};
+    }
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-header__icons--search:hover svg path {
+        fill:{{ module.style.font.desktop_menu_color.sticky_header.search_hover_icon_color.color }};
+    }
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-header__language-switcher--label-icon svg path{
+        fill:{{ module.style.font.desktop_menu_color.sticky_header.label_color.color }};
+    }
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-header__language-switcher--label:hover .business-header__language-switcher--label-icon svg path{
+        fill: {{ module.style.font.desktop_menu_color.sticky_header.language_switcher_hover_label_color.color }};
+    }
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-header__language-switcher--label-current {
+        color:{{ module.style.font.desktop_menu_color.sticky_header.language_switcher_label_color.color }};
+    }
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-header__language-switcher--label:hover .business-header__language-switcher--label-current {
+        color: {{ module.style.font.desktop_menu_color.sticky_header.label_color.color }};
+    }
+
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-social-links .business-social-links__link svg path{
+        fill: {{ module.style.color.search_header_color.social_media_color_copy.icon_color.color }};
+    }
+
+    .business-header--{{ name }}.business-sticky-header .business-header__container:not(.business-header--mobile) .business-social-links .business-social-links__link:hover svg path{
+        fill: {{ module.style.color.search_header_color.social_media_color_copy.icon_hover_color.color }};
+    }
+
+
+
+    .business-header--{{ name }}.business-sticky-header  .business-submenu.level-1 > li > span a{
+        color: {{ module.style.font.desktop_menu_color.sticky_header.menu_color.color  }} !important;
+    }
+
+    .business-sticky-header .business-submenu.level-1 > li > span a:hover,
+    .business-sticky-header .business-submenu.level-1 > li > span a.business-active-item{
+        color: {{ module.style.font.desktop_menu_color.sticky_header.link_hover_color.color  }} !important;
+    }
+
+    .business-sticky-header .business-submenu.level-1 > li > span a:hover .business-menu-chevron svg path{
+        fill: {{ module.style.font.desktop_menu_color.sticky_header.link_hover_color.color  }} !important;
+    }
+    .business-sticky-header .business-menu-chevron svg path{
+        fill: {{ module.style.font.desktop_menu_color.sticky_header.menu_color.color  }} !important;
+    }
+
+    .business-sticky-header .business-submenu.level-1 > li > span a > span:not(.business-menu-chevron):after {
+        background-color: {{ module.style.font.desktop_menu_color.sticky_header.link_hover_color.color  }} !important;
+    }
+
+
+    {% if module.sticky.rich_text %}
+    .business-header--{{ name }}.business-sticky-header .business-header__content--rich-text{
+        color: {{ module.sticky.rich_text_color.color }};
+    }
+    {% endif %}
+
+    .business-header--{{ name }} .business-header__mobile-nav__inner>span {
+
+        color: {{ module.style.font.mobile_menu_color.mobile_header.navigation.color  }};
+        font-size:{{ module.style.font.mobile_header.navigation_label.font_size }}px;
+        font-weight:{{ module.style.font.mobile_header.navigation_label.font_weight }};
+
+    }
+
+    .business-header--{{ name }} .business-header--centered-logo .business-header__mobile-nav__inner>span,
+    .business-header--{{ name }} .business-header--off-canvas-menu .business-header__mobile-nav__inner>span{
+        color: {{ header_nav_label_font_color.color }};
+    }
+
+    .business-header--{{ name }}.business-sticky-header .business-header--centered-logo .business-header__mobile-nav__inner>span,
+    .business-header--{{ name }}.business-sticky-header .business-header--off-canvas-menu .business-header__mobile-nav__inner>span{
+        color: {{ sticky_nav_label_font_color.color }};
+    }
+    {% if module.search %}
+    .business-header--{{ name }} #business-header__icons--search__mmenu .hs-search-field--open .hs-search-field__suggestions{
+        {{ module.style.border.header_search_border.border_field.css }}
+    }
+    {% endif %}
+    #business-header__icons--search__mmenu .hs-search-field__suggestions li a{
+        color:{{ module.style.font.desktop_menu_color.search_header_color.link_color.color }};
+    }
+
+    #business-header__icons--search__mmenu .hs-search-field__suggestions li a:hover{
+        color:{{ module.style.font.desktop_menu_color.search_header_color.link_hover_color.color }};
+    }
+
+    #business-header__icons--search__mmenu .hs-search-field__suggestions li a:before {
+        border: 1px solid {{ module.style.font.desktop_menu_color.search_header_color.label_field.color }};
+    }
+
+    #business-header__icons--search__mmenu .hs-search-field__suggestions #results-for{
+        color: {{ module.style.font.desktop_menu_color.search_header_color.label_field.color }};
+        font-size:{{ module.style.font.desktop_menu_color.search_header_font.font_size  }}px;
+        font-weight:{{ module.style.font.desktop_menu_color.search_header_font.font_weight  }};
+    }
+    #business-header__icons--search__mmenu .hs-search-highlight{
+        font-weight: {{ module.search_settings.header_search.label_font.variant }};
+    }
+    .business-header--{{ name }} .business-header__content--rich-text{
+        {{ module.style.spacing.section.contect_section_settings.rich_text_spacing.css }}
+    }
+
+    .business-header--{{ name }} .business-social-links {
+        {{ module.style.spacing.section.contect_section_settings.social_media_icon_spacing.css }}
+    }
+
+    .business-header--{{ name }} .business-social-links .business-social-links__link svg {
+        width:{{ module.style.icon_size.contect_section_settings.icon_size }}px;
+        height:{{ module.style.icon_size.contect_section_settings.icon_size }}px;
+    }
+
+    .business-header--{{ name }} .business-social-links .business-social-links__link svg path {
+        fill:{{ module.style.font.desktop_menu_color.social_media_color.icon_color.color  }};
+    }
+
+    .business-header--{{ name }} .business-social-links .business-social-links__link:hover svg path {
+        fill:{{ module.style.font.desktop_menu_color.social_media_color.icon_hover_color.color  }};
+    }
+    {% if module.style.font.desktop_menu_color.enable_override_color_ %}
+
+    .business-header__content .button  {
+        color: {{ module.style.contect_section_settings.button_color_copy.text_color.color }} !important;
+        font-size: {{ module.cs_settings.button_settings.font.size.value }}{{module.cs_settings.button_settings.font.size.units }};
+        {{ module.style.spacing.section.contect_section_settings.menu_spacing.css }};
+    }
+    {% endif %}
+    .business-header--{{ name }} .button:hover {
+        text-decoration:none;
+    }
+
+
+
+    .button_header{ display:flex; align-items:center;   transition: all 0.5s ease-in-out; border-radius:{{ module.style.font.desktop_menu_color.button_color_copy.border_radius }}px; {{ module.style.spacing.section.contect_section_settings.menu_spacing.css }}; }
+
+
+    .button_header svg{ width:20px; height:20px; display:block; fill:{{ module.style.font.desktop_menu_color.button_color_copy.text_color.color }};  }
+    .business-header--{{ name }} .button svg path {
+        fill:{{ module.style.contect_section_settings.button_color_copy.text_color.color }};
+    }
+
+
+    {% if module.cs_settings.button_settings.gradient_background %}
+    .business-header--{{ name }} .button {
+        background: rgb({{ module.cs_settings.button_settings.background_color.color|convert_rgb }});
+        background: linear-gradient(140deg, rgba({{ module.cs_settings.button_settings.background_color.color|convert_rgb }}, {{ module.cs_settings.button_settings.background_color.opacity / 100 }}) 0%, rgba({{ module.cs_settings.button_settings.background_color_gradient.color|convert_rgb }}, {{ module.cs_settings.button_settings.background_color_gradient.opacity / 100 }}) 100%); 
+    }
+    .business-header--{{ name }} .button:hover {
+        background: rgb({{ module.cs_settings.button_settings.background_hover.color|convert_rgb }});
+        background: linear-gradient(140deg, rgba({{ module.cs_settings.button_settings.background_hover.color|convert_rgb }}, {{ module.cs_settings.button_settings.background_hover.opacity / 100 }}) 0%, rgba({{ module.cs_settings.button_settings.background_hover_gradient.color|convert_rgb }}, {{ module.cs_settings.button_settings.background_hover_gradient.opacity / 100 }}) 100%); 
+        text-decoration:none;
+    }
+    {% endif %}
+
+    {% if module.cs_settings.button_settings.border %}
+    {% if module.cs_settings.button_settings.border_color.color %}
+    .business-header--{{ name }} .button {
+        border-width: 2px;
+        border-style: solid;
+        border-color: rgba({{ module.cs_settings.button_settings.border_color.color|convert_rgb }}, {{ module.cs_settings.button_settings.border_color.opacity / 100 }});
+    }
+    {% endif %}
+    {% if module.cs_settings.button_settings.border_hover_color.color %}
+    .business-header--{{ name }} .button:hover {
+        border-color: rgba({{ module.cs_settings.button_settings.border_hover_color.color|convert_rgb }}, {{ module.cs_settings.button_settings.border_hover_color.opacity / 100 }});
+    }
+    {% endif %}
+    {% endif %}
+
+
+
+    #business-header__mobile-nav__mmenu .mm-btn_prev.mm-btn:before{
+        border-color:{{ module.style.font.mobile_menu_color.navigation_color.color_field_2.color }};
+    }
+    #business-header__mobile-nav__mmenu .mm-navbar{
+        background: rgba({{module.style.font.mobile_menu_color.navigation_color.background_color.color |convert_rgb }}, {{ module.style.font.mobile_menu_color.navigation_color.background_color.opacity  / 100 }});
+
+        color:{{ module.style.font.mobile_menu_color.navigation_color.color_field_2.color }};
+    }
+
+    .mm-navbar__breadcrumbs span,.mm-navbar__breadcrumbs a{   color:{{ module.style.font.mobile_menu_color.navigation_color.color_field_1.color }} !important;}
+
+    #business-header__mobile-nav__mmenu .mm-btn_close:before,
+    #business-header__mobile-nav__mmenu .mm-btn_close:after{
+        background-color:{{ module.style.font.mobile_menu_color.navigation_color.color_field_2.color }}!important;
+    }
+    #business-header__mobile-nav__mmenu .business-mobile-menu-link:hover{
+        color:{{ module.style.font.mobile_menu_color.menu_color.menu_hover_color.color }} !important;
+    }
+    #business-header__mobile-nav__mmenu .business-mobile-menu-link{
+        color:{{ module.style.font.mobile_menu_color.menu_color.color_field.color }} !important;
+    }
+
+
+    #business-header__mobile-nav__mmenu .mm-divider,
+    #business-header__mobile-nav__mmenu .mm-panels,
+    #business-header__mobile-nav__mmenu .mm-panel,
+    #business-header__mobile-nav__mmenu.mm-menu{
+        background: rgba({{ module.style.font.mobile_menu_color.menu_color.background_color.color |convert_rgb }}, {{ module.style.font.mobile_menu_color.menu_color.background_color.opacity  / 100 }});
+    }
+    #business-header__mobile-nav__mmenu .mm-btn:after,
+    #business-header__mobile-nav__mmenu .mm-btn:before {
+        border-color:{{ module.style.font.mobile_menu_color.drop_down_icon_color.drop_down_icon_color.color }};
+    }
+
+
+    {% if module.mobile_menu.rich_text %}
+    #business-header__mobile-nav__mmenu .business-header__content--rich-text{
+        {{ module.style.spacing.mobile_button.mobile_header.menu_spacing.css }}
+    }
+    {% endif %}
+
+    #business-header__mobile-nav__mmenu .business-social-links{
+        {{ module.style.spacing.mobile_button.mobile_social_icon.menu_spacing.css }};
+    }
+
+    #business-header__mobile-nav__mmenu .business-social-links .business-social-links__link svg {
+        width:{{ module.style.icon_size.mobile_menu.icon_size }}px;
+        height:{{ module.style.icon_size.mobile_menu.icon_size }}px;
+    }
+
+    #business-header__mobile-nav__mmenu .business-social-links .business-social-links__link svg path {
+        fill:{{ module.style.font.mobile_menu_color.social_media_color.icon_color.color }};
+    }
+
+    #business-header__mobile-nav__mmenu .business-social-links .business-social-links__link:hover svg path {
+        fill:{{ module.style.font.mobile_menu_color.social_media_color.icon_hover_color.color }};
+    }
+    {% if module.style.font.mobile_menu_color.enable_override_color_ %}
+
+    #business-header__mobile-nav__mmenu .button {
+        font-weight:{{ module.style.font.mobile_font.menu_font.font_weight }};
+        {{ module.mobile_menu.button_settings.font.style }};
+        color:{{ module.style.font.mobile_menu_color.button_color.text_color.color  }} !important;
+        font-size:{{ module.style.font.mobile_font.menu_font.font_size }}px;
+        border-radius:{{ module.style.font.mobile_menu_color.button_color.border_radius }}px;
+        {{ module.style.spacing.mobile_button.mobile.menu_spacing.css }};
+        background:{{ module.style.font.mobile_menu_color.button_color.background_color.color }};
+    }
+    #business-header__mobile-nav__mmenu  .button-2.button-animation:before, .button.button-animation:before {
+        background-color: rgba({{ module.style.font.mobile_menu_color.button_color.color_field_1.color  |convert_rgb }}, {{ module.style.font.mobile_menu_color.button_color.color_field_1.opacity  / 100 }});
+
+
+    }
+    #business-header__mobile-nav__mmenu .button:hover{  color:{{ module.style.font.mobile_menu_color.button_color.menu_hover_color.color  }}; }
+    {% endif %}
+
+    {% if module.style.enable_override_color_ %}
+    #business-header__mobile-nav__mmenu .button svg path {
+        fill: {{ module.style.font.mobile_menu_color.button_color.text_color.color  }};
+    }
+    {% endif %}
+
+    {% if module.mobile_menu.button_settings.gradient_background %}
+    #business-header__mobile-nav__mmenu .button {
+        background: rgb({{ module.mobile_menu.button_settings.background_color.color|convert_rgb }});
+        background: linear-gradient(140deg, rgba({{ module.mobile_menu.button_settings.background_color.color|convert_rgb }}, {{ module.mobile_menu.button_settings.background_color.opacity / 100 }}) 0%, rgba({{ module.mobile_menu.button_settings.background_color_gradient.color|convert_rgb }}, {{ module.mobile_menu.button_settings.background_color_gradient.opacity / 100 }}) 100%); 
+    }
+    #business-header__mobile-nav__mmenu .button:hover {
+        background: rgb({{ module.mobile_menu.button_settings.background_hover.color|convert_rgb }});
+        background: linear-gradient(140deg, rgba({{ module.mobile_menu.button_settings.background_hover.color|convert_rgb }}, {{ module.mobile_menu.button_settings.background_hover.opacity / 100 }}) 0%, rgba({{ module.mobile_menu.button_settings.background_hover_gradient.color|convert_rgb }}, {{ module.mobile_menu.button_settings.background_hover_gradient.opacity / 100 }}) 100%); 
+    }
+    {% endif %}
+
+    {% if module.mobile_menu.button_settings.border %}
+    {% if module.mobile_menu.button_settings.border_color.color %}
+    #business-header__mobile-nav__mmenu .button {
+        border-width: 2px;
+        border-style: solid;
+        border-color: rgba({{ module.mobile_menu.button_settings.border_color.color|convert_rgb }}, {{ module.mobile_menu.button_settings.border_color.opacity / 100 }});
+
+    }
+
+    {% endif %}
+    {% if module.mobile_menu.button_settings.border_hover_color.color %}
+    #business-header__mobile-nav__mmenu .button:hover {
+        border-color: rgba({{ module.mobile_menu.button_settings.border_hover_color.color|convert_rgb }}, {{ module.mobile_menu.button_settings.border_hover_color.opacity / 100 }});
+    }
+    {% endif %}
+    {% endif %}
+
+
+
+    .business-header--{{ name }} .business-mega-menu__col .hs-menu-wrapper ul .hs-menu-item a {
+        color: {{ module.style.font.desktop_menu_color.menu_color.mega_menu_color.color }};
+        font-size: {{ module.style.font.desktop_menu_color.menu_color.mega_menu_font_size }}px;
+        transition:all 0.3s ease-in-out;
+    }
+
+    .business-header--{{ name }} .business-mega-menu__col .hs-menu-wrapper ul .hs-menu-item a:hover{
+        color: {{ module.style.font.desktop_menu_color.menu_color.mega_menu_hover_color.color }};
+        text-decoration:none;
+    }
+
+    .business-header--{{ name }} .business-mega-menu__col .business-mega-menu__col__inner--menu-header .hs-menu-wrapper ul .hs-menu-item.hs-menu-depth-1 > a {
+        font-family: {{ module.mega_menu_settings.menu_header_font.font }};
+        {{ module.mega_menu_settings.menu_header_font.style }};
+        color: {{ module.mega_menu_settings.menu_header_font.color }};
+        font-size: {{ module.mega_menu_settings.menu_header_font.size.value }}{{ module.mega_menu_settings.menu_header_font.size.units }};
+    }
+
+    .business-header--{{ name }} .business-mega-menu__col .hs-menu-wrapper ul .hs-menu-item a:hover:after {
+        background-color: {{ module.mega_menu_settings.hover_color.color }};
+    }
+
+    .business-header--{{ name }} .business-mega-menu__col .business-mega-menu__col__inner--menu-header .hs-menu-wrapper ul .hs-menu-item.hs-menu-depth-1 > a:after{
+        display: none;
+    }
+    .business-mega-menu {
+        {% if module.mega_menu_settings.width =='header-width'  %}
+        width:90%;
+        {% else %}
+        width:100%;
+        {% endif %}
+    }
+    .business-header__icons--search svg {
+        height: {{ module.style.icon_size.contect_section_settings.icon_size  }}px;
+        width: {{ module.style.icon_size.contect_section_settings.icon_size  }}px;
+    }
+    .mobile_header_button{ color:{{module.style.font.mobile_menu_color.button_color.text_color.color   }} !Important; background:{{ module.style.font.mobile_menu_color.button_color.background_color.color  }} !important;}
+    .mobile_header_button:hover{ color:{{ module.style.font.mobile_menu_color.button_color.menu_hover_color.color  }};background:{{ module.style.font.mobile_menu_color.button_color.color_field_1.color  }} !important; }
+    .mobile_header_button{ {{ module.style.spacing.mobile_button.mobile.menu_spacing.css }}  border-radius:{{ module.style.font.mobile_menu_color.button_color.border_radius }}px;}
+
+
+    {% scope_css %}
+
+
+
+    .business-header{ background:rgba({{ module.style.font.desktop_menu_color.header_background_.background_color.color  | convert_rgb  }},{{ module.style.font.desktop_menu_color.header_background_.background_color.opacity  /100 }});
+    }
+    .business-header__container{
+        {{ module.style.spacing.section.header.spacing.css }};
+    }
+    {% if module.style.font.desktop_menu_color.enable_override_color_ %}
+    .business-button-wrapper .button{ color:{{ module.style.font.desktop_menu_color.button_color_copy.text_color.color }} !important; background: rgba({{ module.style.font.desktop_menu_color.button_color_copy.background_color.color | convert_rgb }},{{ module.style.font.desktop_menu_color.button_color_copy.background_color.opacity / 100 }}) !important; border-color:{{ module.style.font.desktop_menu_color.button_color_copy.background_color.color }};}
+    .business-button-wrapper .button:hover{ color:{{ module.style.font.desktop_menu_color.button_color_copy.menu_hover_color.color }} !important;border-color:{{ module.style.font.desktop_menu_color.button_color_copy.background_color.color }}; }
+    .business-button-wrapper .button-2.button-animation:before, .button.button-animation:before{ background:rgba({{ module.style.font.desktop_menu_color.button_color_copy.hover_background.color | convert_rgb }}, {{ module.style.font.desktop_menu_color.button_color_copy.hover_background.opacity / 100 }}) !important;  }
+    .business-button-wrapper a.button.button-animation {
+        display: flex;
+        gap: 5px;
+    }
+
+    .business-button-wrapper a.button.button-animation svg {
+        fill: {{ module.style.font.desktop_menu_color.button_color_copy.text_color.color }};
+        width: 13px;
+        height: 13px;
+    }
+
+    .business-button-wrapper a.button.button-animation:hover svg {
+        fill: {{ module.style.font.desktop_menu_color.button_color_copy.menu_hover_color.color }};
+    }
+    {% endif %}
+
+
+    #business-header__icons--search__mmenu{ background:{{ module.style.font.desktop_menu_color.search_header_color.background_color.color }}; }
+    .business-header--{{ name }} #business-header__mobile-nav__mmenu .hs-search-field__input{
+        {{ module.style.font.mobile_menu_color.search_input_border.border_field_1.css }};
+    }
+    .business-header--{{ name }} #business-header__mobile-nav__mmenu .hs-search-field--open .hs-search-field__suggestions{
+        {{ module.style.font.mobile_menu_color.search_input_border.border_field_1.css }};
+    }
+    .business-header--header .business-has-submenu>.business-submenu {
+        {{ module.style.font.desktop_menu_color.menu_drop_down_box.border_field.css }};
+    }
+
+    {% end_scope_css %}
+
+    #business-header__icons--search__mmenu .mm-panels form input[type=text], 
+    #business-header__icons--search__mmenu .mm-panels form input[type=email], 
+    #business-header__icons--search__mmenu .mm-panels form input[type=password], 
+    #business-header__icons--search__mmenu .mm-panels form input[type=tel], 
+    #business-header__icons--search__mmenu .mm-panels form input[type=number], 
+    #business-header__icons--search__mmenu .mm-panels form input[type=file], 
+    #business-header__icons--search__mmenu .mm-panels form select, 
+    #business-header__icons--search__mmenu .mm-panels form textarea {
+        color:{{ module.style.font.desktop_menu_color.search_header_color.type_text_color.color }} !important;
+        background-color: transparent;
+        border: 1px solid;
+        border-radius: 0;
+        display: inline-block;
+        font-size: 95%;
+        padding: 1rem;
+        width: 100%;
+        border-radius: 8px 0px 0 8px !important;
+        -webkit-transition: all .2s;
+        -moz-transition: all .2s;
+        -o-transition: all .2s;
+        transition: all .2s;
+
+        border: transparent;
+    }
+    #business-header__mobile-nav__mmenu .hs-search-field__bar button svg { 
+        fill:{{ module.style.font.mobile_menu_color.search_icon.search_icon_color.color }};
+    }
+    .business-sticky-header .business-social-links>*:first-child {
+        padding: 0px;
+    }
+    .mm-listitem:after{ border-color:{{ module.style.font.mobile_menu_color.menu_color.border_color.color }};
+    }
+    #business-header__mobile-nav__mmenu form{ display:flex;gap:5px;padding: 20px 20px 20 20px;} 
+
+    @media(max-width:450px){
+
+        .mm-menu_offcanvas {
+            width: 100%;
+
+        }
+
+    }
+
+    @media(max-width:700px){
+        /*         #business-header__mobile-nav__mmenu form{ display:block; }  */
+        #business-header__mobile-nav__mmenu .business-social-links{
+            {{ module.style.spacing.mobile_button.mobile_social_icon.menu_spacing .css }} ;
+        }
+    }
+
+    {% scope_css %}
+    .top-bar-row{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+    }
+    .left-bar .bar-list,
+    .right-bar .social-list{
+        margin:0;
+        padding:0;
+        list-style:none;
+        display:flex;
+        align-items:center;
+    }
+    .left-bar .bar-list{}
+    .bar-ico svg{
+        width:16px;
+        height:16px;
+        display:block;
+        fill:rgba({{ module.style.font.top_bar.icon.color | convert_rgb }},
+            {{ module.style.font.top_bar.icon.opacity /100 }});
+    }
+    .social-list li svg{
+        width:20px;
+        height:20px;
+        display:block;
+        fill:rgba({{ module.style.font.top_bar.social_icon.color | convert_rgb }},
+            {{ module.style.font.top_bar.social_icon.opacity /100 }});
+    }
+    .social-list li{
+        display:flex;
+        align-items:center;
+    }
+    .bar-text {
+        margin-left: 10px;
+        color:rgba({{ module.style.font.top_bar.text.color | convert_rgb }},
+            {{ module.style.font.top_bar.text.opacity /100 }});
+    }
+    .social-list li+li{margin-left:20px;}
+    .left-bar .bar-list li+li{margin-left: 30px;border-left: 1px solid #fff;padding-left: 15px;}
+    .left-bar .bar-list li{
+        display:flex;
+        align-items:center;
+    }
+    .header-top-bar{
+        background:rgba({{ module.style.font.top_bar.background.color | convert_rgb }},
+            {{ module.style.font.top_bar.background.opacity /100 }});
+        padding:14px 0;
+        border-bottom: 1px solid rgb(255 255 255 / 22%);
+    }
+    @media(max-width:1240px){
+        .header-top-bar{display:none;}
+    }
+    {% end_scope_css %}
+
+</style>
+{% end_require_css %}

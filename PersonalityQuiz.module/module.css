@@ -1,0 +1,154 @@
+/*
+ * Personality Quiz Module Styles
+ * ==============================
+ * Responsive quiz interface with progress tracking and form styling.
+ */
+
+/* Container Styles */
+#form-container {
+  border-radius: 8px;
+  box-shadow: 0px 1px 15px 0px rgba(0, 0, 0, 0.37);
+}
+
+.result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.1em 1.8em;
+  width: 80%;
+  max-width: 37.5em;
+  margin: 0 auto;
+  height: 100%;
+}
+
+#display-container {
+  padding: 3em 1.5em;
+  width: 80%;
+  max-width: 37.5em;
+  margin: 0 auto;
+}
+
+/* Button Base Styles */
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Restart Button */
+#restart {
+  background-color: #b50505;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: var(--heading-font, sans-serif);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0;
+  min-width: 10em;
+  padding: 1rem 2.25rem;
+  text-align: center;
+  transition: all 0.25s ease-out, background-color 0.25s ease-out;
+}
+
+#restart:hover {
+  background-color: #ed0505;
+  box-shadow: 0 4px 15px rgba(50, 1, 1, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  background-color: #f2f2f2;
+  border-radius: 0.5em;
+  overflow: hidden;
+  margin-top: 1em;
+}
+
+.progress {
+  width: 0;
+  height: 0.5em;
+  background-color: #ed0505;
+  transition: width 0.3s ease;
+}
+
+/* Question Styles */
+#question {
+  font-weight: 700;
+  font-size: 1.25em;
+  text-align: center;
+}
+
+/* Option Buttons */
+.option-div {
+  font-size: 0.9em;
+  width: 100%;
+  padding: 1em;
+  margin: 0.3em 0;
+  text-align: left;
+  outline: none;
+  background: #f2f2f2;
+  border: 1px solid #f2f2f2;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #0e0303;
+  transition: all 0.3s, color 0.3s;
+}
+
+.option-div:hover {
+  background-color: #ed0505;
+  box-shadow: 0 4px 15px rgba(50, 1, 1, 0.15);
+  transform: translateY(-1px);
+  color: #fff;
+}
+
+/* Footer Bar */
+.footer-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1em;
+}
+
+/* Utility Classes */
+.hide {
+  display: none;
+}
+
+#back-button {
+  font-size: 1em;
+  color: #bdbdbd;
+  background: transparent;
+  text-align: left;
+  opacity: 1;
+}
+
+#back-button.hide {
+  display: inherit;
+  opacity: 0;
+}
+
+/* Result Display */
+#user-result {
+  font-family: var(--heading-font, sans-serif);
+  text-transform: uppercase;
+  line-height: 0.85;
+  font-weight: 700;
+  font-size: 1.5em;
+  color: #0e0303;
+}
+
+#user-type {
+  font-family: var(--heading-font, sans-serif);
+  text-transform: uppercase;
+  line-height: 0.85;
+  font-weight: 700;
+  font-size: 3em;
+  color: #0e0303;
+  padding-bottom: 30px;
+}

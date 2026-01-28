@@ -1,0 +1,123 @@
+[
+  {
+    "id": "f539e70c-4e8f-cb7d-5c02-7d046fe60f53",
+    "name": "date",
+    "label": "Dates",
+    "type": "group",
+    "required": false,
+    "locked": false,
+    "occurrence": {
+      "min": 1,
+      "max": null,
+      "sorting_label_field": null,
+      "default": 1
+    },
+    "children": [
+      {
+        "id": "dffe7331-936c-c2e0-024b-bc7b32aa5192",
+        "name": "date_field",
+        "label": "Day",
+        "type": "date",
+        "required": true,
+        "locked": false,
+        "default": 1721019600000,
+        "inline_help_text": "Select the date for this group of events"
+      },
+      {
+        "id": "5ddde128-c798-bdd8-7489-b9e51b9aa407",
+        "name": "event",
+        "label": "Events",
+        "type": "group",
+        "required": false,
+        "locked": false,
+        "occurrence": {
+          "min": 1,
+          "max": null,
+          "sorting_label_field": null,
+          "default": 1
+        },
+        "children": [
+          {
+            "id": "1de1e10f-4afe-2a0f-ddee-cd7dc3c70b0c",
+            "name": "time",
+            "label": "Time",
+            "type": "text",
+            "required": false,
+            "locked": false,
+            "validation_regex": "",
+            "allow_new_line": false,
+            "show_emoji_picker": false,
+            "default": "",
+            "inline_help_text": "e.g., '9:00 AM - 10:30 AM' or '14:00'"
+          },
+          {
+            "id": "dab82977-5c32-1ae1-8f11-91dc6a1ee736",
+            "name": "image_field",
+            "label": "Event Image",
+            "type": "image",
+            "required": false,
+            "locked": false,
+            "responsive": true,
+            "resizable": true,
+            "show_loading": false,
+            "default": {
+              "size_type": "auto",
+              "src": "",
+              "alt": null,
+              "loading": "lazy"
+            },
+            "inline_help_text": "Optional image for this event"
+          },
+          {
+            "id": "e67b13b9-d0ab-2b2d-5b60-4516feef2937",
+            "name": "description",
+            "label": "Description",
+            "type": "text",
+            "required": true,
+            "locked": false,
+            "validation_regex": "",
+            "allow_new_line": false,
+            "show_emoji_picker": false,
+            "default": "Event description goes here.",
+            "inline_help_text": "Brief description of the event"
+          }
+        ],
+        "tab": "CONTENT",
+        "expanded": false,
+        "group_occurrence_meta": null,
+        "default": [
+          {
+            "time": "",
+            "image_field": {
+              "size_type": "auto",
+              "src": "",
+              "alt": null,
+              "loading": "lazy"
+            },
+            "description": "Event description goes here."
+          }
+        ]
+      }
+    ],
+    "tab": "CONTENT",
+    "expanded": false,
+    "group_occurrence_meta": null,
+    "default": [
+      {
+        "date_field": 1721019600000,
+        "event": [
+          {
+            "time": "",
+            "image_field": {
+              "size_type": "auto",
+              "src": "",
+              "alt": null,
+              "loading": "lazy"
+            },
+            "description": "Event description goes here."
+          }
+        ]
+      }
+    ]
+  }
+]

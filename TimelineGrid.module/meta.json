@@ -1,0 +1,9 @@
+{
+  "label": "Timeline Grid",
+  "global": false,
+  "content_types": ["LANDING_PAGE", "SITE_PAGE"],
+  "host_template_types": ["PAGE", "BLOG_LISTING", "BLOG_POST"],
+  "is_available_for_new_content": true,
+  "icon": "module",
+  "inline_help_text": "Display events organized by date in a responsive CSS Grid layout. Perfect for schedules and timelines."
+}

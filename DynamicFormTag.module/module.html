@@ -1,0 +1,113 @@
+{#
+  Dynamic Form Tag Module
+  =======================
+  Dynamically injects third-party CRM forms with tag injection and redirect handling.
+
+  Features:
+  - MutationObserver for async form detection
+  - Dynamic hidden field injection for tracking
+  - Conditional field visibility (show/hide name field)
+  - Post-submission redirect handling
+  - Works with ActiveCampaign, HubSpot Forms, and similar CRM systems
+
+  Usage: Embed on any page where you need to inject tracking tags into forms.
+#}
+
+<div class="_form_{{ module.form_id }}"></div>
+<script src="{{ module.form_embed_url }}?id={{ module.form_id }}" charset="utf-8"></script>
+
+<script>
+  // Dynamic tag from module settings or page context
+  var pageTag = "{{ module.dynamic_tag }}" || "defaultTag";
+  var redirectURL = "{{ module.redirect_url.href }}" || window.location.origin;
+
+  /**
+   * Inject the dynamic tag into the form's hidden field
+   * Handles conditional field visibility and redirect setup
+   */
+  function injectTagIntoForm() {
+    console.log("Initializing form tag injection...");
+
+    // Find the form using partial class selector for dynamic form IDs
+    var form = document.querySelector('div[class^="_form_"] form');
+
+    if (form) {
+      console.log("Form found, injecting tag:", pageTag);
+
+      {% if !module.show_name_field %}
+      // Hide the name field if configured
+      var fullnameField = document.getElementById('fullname');
+      if (fullnameField) {
+        fullnameField.classList.add('hidden');
+        var parentElement = fullnameField.closest('._form_element');
+        if (parentElement) {
+          parentElement.classList.add('hidden');
+        }
+      }
+
+      // Adjust button wrapper padding
+      var buttonWrapper = document.getElementsByClassName('_button-wrapper')[0];
+      if (buttonWrapper) {
+        buttonWrapper.classList.add('nopadding');
+      }
+      {% endif %}
+
+      // Create or find the hidden tag field
+      var tagField = form.querySelector('input[data-name="dynamic_tag"]');
+      if (!tagField) {
+        tagField = document.createElement("input");
+        tagField.type = "hidden";
+        tagField.setAttribute("name", "field[dynamic_tag]");
+        tagField.setAttribute("data-name", "dynamic_tag");
+        form.appendChild(tagField);
+      }
+
+      // Set the tag value
+      tagField.value = pageTag;
+      console.log("Tag injected:", pageTag);
+
+      // Handle redirect after form submission
+      form.onsubmit = function() {
+        console.log("Form submitted, redirecting...");
+        setTimeout(function() {
+          window.location.href = redirectURL;
+        }, 200); // Small delay to ensure submission completes
+      };
+
+    } else {
+      console.log("Form not found, waiting for async load...");
+    }
+  }
+
+  // Check if form already exists on page load
+  if (document.querySelector('div[class^="_form_"] form')) {
+    injectTagIntoForm();
+  } else {
+    // Use MutationObserver to detect when form is added to DOM
+    var observer = new MutationObserver(function(mutationsList) {
+      for (var mutation of mutationsList) {
+        if (mutation.addedNodes.length) {
+          for (var node of mutation.addedNodes) {
+            // Check if the added node is or contains our form
+            if (node.matches && node.matches('div[class^="_form_"] form')) {
+              console.log("Form detected via MutationObserver");
+              injectTagIntoForm();
+              observer.disconnect();
+              return;
+            }
+            // Also check children of added nodes
+            if (node.querySelector && node.querySelector('div[class^="_form_"] form')) {
+              console.log("Form found in added node children");
+              injectTagIntoForm();
+              observer.disconnect();
+              return;
+            }
+          }
+        }
+      }
+    });
+
+    // Start observing the document body for added nodes
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+</script>

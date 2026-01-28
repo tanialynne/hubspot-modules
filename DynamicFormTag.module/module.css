@@ -1,0 +1,116 @@
+/*
+ * Dynamic Form Tag Module Styles
+ * ==============================
+ * Responsive form styling with inline layout support.
+ */
+
+/* Form Container Reset */
+._form {
+  width: 100% !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Inline Form Layout */
+._form-content {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  margin: 20px 0 !important;
+}
+
+._form_element,
+._button-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-basis: 100% !important;
+}
+
+/* Desktop: Side-by-side layout */
+@media (min-width: 768px) {
+  ._form-content {
+    flex-wrap: nowrap !important;
+  }
+
+  ._form_element,
+  ._button-wrapper {
+    flex: 1 !important;
+    flex-basis: auto !important;
+  }
+
+  ._button-wrapper {
+    flex: 0 1 auto !important;
+    padding-right: 0 !important;
+  }
+
+  ._form_element._full_width {
+    flex: 0 100% !important;
+  }
+}
+
+/* Mobile & Tablet: Stacked layout */
+@media (max-width: 767px) {
+  ._form-content {
+    flex-direction: column !important;
+  }
+
+  ._form_element,
+  ._button-wrapper {
+    flex-basis: 100% !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* Inline style button wrapper spacing */
+._form._inline-style ._button-wrapper {
+  margin: 0 20px 10px !important;
+}
+
+/* Hide form labels (optional - remove if labels desired) */
+._form-label {
+  display: none !important;
+}
+
+/* Button Styling */
+._form-content button,
+._submit {
+  font-size: 20px !important;
+  line-height: normal !important;
+  padding: 16px !important;
+  margin-top: 0 !important;
+  font-family: var(--body-font, sans-serif) !important;
+  white-space: nowrap;
+}
+
+/* Input Styling */
+.input,
+input,
+select,
+summary,
+textarea {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-color: #fff !important;
+  border: 0.0625rem solid #d8d8d8 !important;
+  border-radius: 8px !important;
+  color: #1c1c1c !important;
+  font-family: var(--body-font, sans-serif) !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.7 !important;
+  width: 100% !important;
+}
+
+/* Hidden Elements */
+.hidden {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* No padding variant for button wrapper */
+._form._inline-style ._button-wrapper.nopadding {
+  margin: 0 0 10px !important;
+}

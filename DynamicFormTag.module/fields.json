@@ -1,0 +1,58 @@
+[
+  {
+    "id": "form_id",
+    "name": "form_id",
+    "label": "Form ID",
+    "type": "number",
+    "display": "text",
+    "step": 1,
+    "required": true,
+    "default": 1,
+    "inline_help_text": "The numeric ID of your CRM form"
+  },
+  {
+    "id": "form_embed_url",
+    "name": "form_embed_url",
+    "label": "Form Embed URL",
+    "type": "text",
+    "required": true,
+    "default": "",
+    "inline_help_text": "The base embed URL for your CRM (e.g., https://yourcrm.com/f/embed.php)"
+  },
+  {
+    "id": "redirect_url",
+    "name": "redirect_url",
+    "label": "Redirect URL",
+    "type": "url",
+    "required": true,
+    "supported_types": ["EXTERNAL", "CONTENT", "FILE", "EMAIL_ADDRESS", "BLOG", "CALL_TO_ACTION", "PHONE_NUMBER", "PAYMENT"],
+    "default": {
+      "content_id": null,
+      "href": "",
+      "type": "EXTERNAL"
+    },
+    "inline_help_text": "Where to redirect after form submission"
+  },
+  {
+    "id": "dynamic_tag",
+    "name": "dynamic_tag",
+    "label": "Dynamic Tag",
+    "type": "text",
+    "required": true,
+    "validation_regex": "",
+    "allow_new_line": false,
+    "show_emoji_picker": false,
+    "default": "source-tag-name",
+    "inline_help_text": "Tag name to inject into form for tracking/segmentation"
+  },
+  {
+    "id": "show_name_field",
+    "name": "show_name_field",
+    "label": "Show Name Field",
+    "type": "boolean",
+    "display": "toggle",
+    "required": false,
+    "default": true,
+    "inline_help_text": "Toggle to show/hide the name field in the form"
+  }
+]

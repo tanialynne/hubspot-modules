@@ -1,0 +1,9 @@
+{
+  "label": "Card Slider",
+  "global": false,
+  "content_types": ["LANDING_PAGE", "SITE_PAGE", "BLOG_LISTING", "BLOG_POST"],
+  "host_template_types": ["PAGE", "BLOG_LISTING", "BLOG_POST"],
+  "is_available_for_new_content": true,
+  "icon": "module",
+  "inline_help_text": "Slick carousel testimonial/content slider with responsive breakpoints and dynamic card heights."
+}

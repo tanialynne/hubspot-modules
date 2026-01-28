@@ -1,0 +1,86 @@
+{#
+  Personality Quiz Module
+  =======================
+  Interactive quiz with scoring, progress tracking, and form submission.
+
+  Features:
+  - Multi-question quiz with personality type calculation
+  - Real-time progress bar
+  - Back navigation with score adjustment
+  - CRM form integration with hidden field injection
+  - Restart functionality
+
+  Usage: Add to any landing page for lead generation with personality assessment.
+#}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div id="form-container">
+  <div id="display-container">
+    <div class="progress-bar">
+      <div class="progress"></div>
+    </div>
+    <div id="container">
+      <p id="question"></p>
+      <div id="options"></div>
+    </div>
+    <div class="footer-bar">
+      <button id="back-button" class="hide">&larr; Back</button>
+      <div class="number-of-count">
+        <span class="number-of-question"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-container hide">
+    <div id="user-result">Your Result is: </div>
+
+    {# Replace with your CRM form - Example structure shown #}
+    <form method="POST" action="{{ module.form_action_url }}" id="_form_quiz_" class="_form _form_quiz _inline-form _dark" novalidate data-styles-version="5">
+      <input type="hidden" name="u" value="{{ module.form_id }}" />
+      <input type="hidden" name="f" value="{{ module.form_id }}" />
+      <input type="hidden" name="s" />
+      <input type="hidden" name="c" value="0" />
+      <input type="hidden" name="m" value="0" />
+      <input type="hidden" name="act" value="sub" />
+      <input type="hidden" name="v" value="2" />
+
+      <div class="_form-content">
+        <div class="_form_element _full_width">
+          <label for="fullname" class="_form-label">Full Name</label>
+          <div class="_field-wrapper">
+            <input type="text" id="fullname" name="fullname" placeholder="Type your name" />
+          </div>
+        </div>
+
+        <div class="_form_element _full_width">
+          <label for="email" class="_form-label">Email*</label>
+          <div class="_field-wrapper">
+            <input type="text" id="email" name="email" placeholder="Type your email" required/>
+          </div>
+        </div>
+
+        <div class="_form_element _full_width">
+          <label for="phone" class="_form-label">Phone</label>
+          <div class="_field-wrapper">
+            <input type="text" id="phone" name="phone" placeholder="Type your phone number" />
+          </div>
+        </div>
+
+        {# Hidden field for quiz result - injected by JavaScript #}
+        <div class="_form_element _full_width">
+          <input type="hidden" name="field[quiz_result]" id="quiz_result" value="" />
+        </div>
+
+        <div class="_button-wrapper _full_width">
+          <button id="_form_quiz_submit" class="_submit" type="submit">Submit</button>
+        </div>
+
+        <div class="_clear-element"></div>
+      </div>
+
+      <div class="_form-thank-you" style="display:none;"></div>
+    </form>
+
+    <button id="restart">Restart Quiz</button>
+  </div>
+</div>

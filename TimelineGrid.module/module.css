@@ -1,0 +1,103 @@
+/*
+ * Timeline Grid Module Styles
+ * ===========================
+ * CSS Grid-based timeline with responsive layout.
+ */
+
+/* Container */
+.timelinegrid {
+  max-width: 1200px;
+}
+
+/* Images */
+.timelinegrid img {
+  width: 100%;
+  border-radius: 5px;
+  height: 250px;
+  object-fit: cover;
+  margin-top: 20px;
+}
+
+/* Date Headers */
+.timelinegrid h2 {
+  color: var(--accent-color, #b50505);
+  font-weight: bold;
+  font-size: 1.3em;
+  margin: 40px 0 10px;
+  font-family: var(--heading-font, sans-serif);
+  text-transform: uppercase;
+}
+
+/* Event Time */
+.timelinegrid h3 {
+  font-weight: bold;
+  margin: 0.5rem 0;
+  font-size: 1.1em;
+  color: var(--text-light, #fff);
+  font-family: var(--heading-font, sans-serif);
+  text-transform: uppercase;
+}
+
+/* Grid Layout */
+.timelinegrid .grid-wrapper {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+/* Articles use display: contents for grid child placement */
+.timelinegrid article {
+  display: contents;
+}
+
+/* Text Content */
+.timelinegrid article .text-content {
+  padding: 10px 0;
+  border-bottom: 1px solid #4d4d4d;
+}
+
+/* Image Content */
+.timelinegrid article .image-content {
+  padding: 10px 20px 10px 0;
+  border-bottom: 1px solid #4d4d4d;
+}
+
+/* Event Description */
+.timelinegrid article p {
+  font-size: 0.95rem;
+  color: var(--text-muted, #c8c8c8);
+  margin: 0;
+}
+
+/* Full Width (no image) */
+.timelinegrid .full-width {
+  grid-column: 1 / -1;
+}
+
+/* =====================
+   Responsive Breakpoints
+   ===================== */
+
+@media screen and (max-width: 990px) {
+  .timelinegrid .grid-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .timelinegrid article .text-content,
+  .timelinegrid article .image-content {
+    grid-column: 1 / -1;
+  }
+
+  .timelinegrid article.has-image .text-content {
+    border-bottom: none;
+  }
+
+  .timelinegrid article .image-content {
+    padding: 0;
+    margin: 0;
+  }
+
+  .timelinegrid img {
+    margin-top: 0;
+  }
+}

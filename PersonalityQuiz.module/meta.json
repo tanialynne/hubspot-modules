@@ -1,0 +1,9 @@
+{
+  "label": "Personality Quiz",
+  "global": false,
+  "content_types": ["LANDING_PAGE", "SITE_PAGE", "WEB_INTERACTIVE"],
+  "host_template_types": ["PAGE", "BLOG_LISTING", "BLOG_POST"],
+  "is_available_for_new_content": true,
+  "icon": "module",
+  "inline_help_text": "Interactive personality quiz with scoring, progress tracking, and CRM form integration."
+}
